@@ -9,7 +9,9 @@ using namespace std;
 void User_reco::hist_def( void )
 { extern BelleTupleManager* BASF_Histogram;    
   t1 = BASF_Histogram->ntuple ("lmbda",
-        "ml mach p chu chl chct en ecm ntr rm2n rm2l rm2nu chrgl chrgach chrgU");
+    "ml mach p chu chl chach en ecm ntr rm2n rm2l rm2nu chrgl chrgach chrgU");
+  t2 = BASF_Histogram->ntuple ("lmbda",
+    "ml mach p chu chl chach en ecm ntr rm2n rm2l rm2nu chrgl chrgach chrgU");
 };
 
 
@@ -185,7 +187,7 @@ void User_reco::event ( BelleEvent* evptr, int* status ) {
   combination(D_p, m_ptypeDP, k_p, k_m, pi_p, 0.05);
   setUserInfo(D_p, {{"chanel", 4}, {"charg", 1}, {"barion_num", 0}});
   combination(D_m, m_ptypeDM, k_p, k_m, pi_m, 0.05);
-  setUserInfo(D_m, {{"chanel", 4}, {"charg", 1}, {"barion_num", 0}});
+  setUserInfo(D_m, {{"chanel", 4}, {"charg", -1}, {"barion_num", 0}});
 
 
   //D0
@@ -254,13 +256,13 @@ void User_reco::event ( BelleEvent* evptr, int* status ) {
 
   combination(lamc_p, m_ptypeLAMC, lam, e_p);
   combination(lamc_m, m_ptypeLAMC, alam, e_m);
-  setUserInfo(lamc_p,  {{"chanel", 1}, {"charg", -1}, {"barion_num", -1}});
-  setUserInfo(lamc_m,  {{"chanel", 1}, {"charg", 1}, {"barion_num", 1}});
+  setUserInfo(lamc_p,  {{"chanel", 1}, {"charg", 1}, {"barion_num", -1}});
+  setUserInfo(lamc_m,  {{"chanel", 1}, {"charg", -1}, {"barion_num", 1}});
 
   combination(lamc_p, m_ptypeLAMC, lam, mu_p);
   combination(lamc_m, m_ptypeLAMC, alam, mu_m);
-  setUserInfo(lamc_p,  {{"chanel", 2}, {"charg", -1}, {"barion_num", -1}});
-  setUserInfo(lamc_m,  {{"chanel", 2}, {"charg", 1}, {"barion_num", 1}});
+  setUserInfo(lamc_p,  {{"chanel", 2}, {"charg", 1}, {"barion_num", -1}});
+  setUserInfo(lamc_m,  {{"chanel", 2}, {"charg", -1}, {"barion_num", 1}});
 
 
 
@@ -270,8 +272,8 @@ void User_reco::event ( BelleEvent* evptr, int* status ) {
   combination(ups, m_ptypeUPS4, lamc_m, lamct_p);
   setUserInfo(ups, {{"chanel", 1}});
 
-  combination(ups, m_ptypeUPS4, lamc_p, lamct_m, pi0);
-  combination(ups, m_ptypeUPS4, lamc_m, lamct_p, pi0);
+  combination(ups, m_ptypeUPS4, lamc_p, lamct_m, rho);
+  combination(ups, m_ptypeUPS4, lamc_m, lamct_p, rho);
   setUserInfo(ups, {{"chanel", 2}});
 
   combination(ups, m_ptypeUPS4, lamc_p, lamct_m, rho4);
@@ -306,36 +308,37 @@ void User_reco::event ( BelleEvent* evptr, int* status ) {
     Particle lam = u.child(0);
     Particle ach = u.child(1);
     map <string, int> chl = dynamic_cast<UserInfo&>(lam.userInfo()).channel();
+    map <string, int> chach = dynamic_cast<UserInfo&>(ach.userInfo()).channel();
     map <string, int> chu = dynamic_cast<UserInfo&>(u.userInfo()).channel();
     int chargU = 0;
-    
-
-    /*
+        
     for (int k = 0; k < n; ++k){
       int p_charge = 0;
-      if ((chu >= 4 & k == 2) || (chu == 6 & k == 3)){
+      if ((chu["chanel"] >= 4 & k == 2) || (chu["chanel"] == 6 & k == 3) || (chu["chanel"] == 5 & k == 3)){
         p_charge = u.child(k).charge();
       }
       else{
-        p_charge = dynamic_cast<UserInfo&>(u.child(k).userInfo()).channel() / 100;
+        map <string, int> inf = dynamic_cast<UserInfo&>(u.child(k).userInfo()).channel();
+        p_charge = inf["charg"];
       }
       if (p_charge != 0){
-        chargU = chargU + p_charge / abs(p_charge);
+        chargU = chargU + p_charge;
       }
     }
-    */
+    
+    
 
     t1->column("ml", lam.mass());
     t1->column("mach", ach.mass() - ach.pType().mass());
     t1->column("p", pStar(u, elec, posi).vect().mag());
-    //t1->column("chu", chu);     
-    //t1->column("chl", chl);
-    //t1->column("chct", dynamic_cast<UserInfo&>(ach.userInfo()).channel());
+    t1->column("chu", chu["chanel"]);     
+    t1->column("chl", chl["chanel"]);
+    t1->column("chach", chach["chanel"]);
     t1->column("en", pStar(u, elec, posi).e());
     t1->column("ecm", ecm);
     t1->column("ntr", ntr);
-    t1->column("chrgl", 0);     
-    t1->column("chrgach", 0);
+    t1->column("chrgl", chl["charg"]);     
+    t1->column("chrgach", chach["charg"]);
     t1->column("chrgU", chargU);
     t1->column("rm2n", (beam - u.p()).m2());
     t1->column("rm2l", (beam - (u.p() - lam.p())).m2());
