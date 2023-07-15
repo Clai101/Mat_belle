@@ -10,7 +10,8 @@ void User_reco::hist_def( void )
 { extern BelleTupleManager* BASF_Histogram;    
   t1 = BASF_Histogram->ntuple ("lmbda",
     "ml mach p chu chl chach en ecm ntr rm2n rm2l rm2nu chrgl chrgach chrgU");
-
+  t2 = BASF_Histogram->ntuple ("lmbdat",
+    "en ecm p ntr chu chrgach chach mach rm2lc");
 };
 
 
@@ -311,6 +312,9 @@ void User_reco::event ( BelleEvent* evptr, int* status ) {
     map <string, int> chu = dynamic_cast<UserInfo&>(u.userInfo()).channel();
     int chargU = 0;
         
+    //cout << "chargl: " << chl["chanel"] << ", chu: " << chu["chanel"] << ", chl: " <<  chach["chanel"] << endl;
+ 
+
     for (int k = 0; k < n; ++k){
       int p_charge = 0;
       if ((chu["chanel"] >= 4 & k == 2) || (chu["chanel"] == 6 & k == 3) || (chu["chanel"] == 5 & k == 3)){
@@ -327,23 +331,45 @@ void User_reco::event ( BelleEvent* evptr, int* status ) {
     
     
 
-    t1->column("ml", lam.mass());
-    t1->column("mach", ach.mass() - ach.pType().mass());
-    t1->column("p", pStar(u, elec, posi).vect().mag());
-    t1->column("chu", chu["chanel"]);     
-    t1->column("chl", chl["chanel"]);
-    t1->column("chach", chach["chanel"]);
     t1->column("en", pStar(u, elec, posi).e());
     t1->column("ecm", ecm);
+    t1->column("p", pStar(u, elec, posi).vect().mag());
     t1->column("ntr", ntr);
-    t1->column("chrgl", chl["charg"]);     
-    t1->column("chrgach", chach["charg"]);
+
+    t1->column("chu", chu["chanel"]);     
     t1->column("chrgU", chargU);
+
+    t1->column("chach", chach["chanel"]);
+    t1->column("chrgach", chach["charg"]);
+    t1->column("mach", ach.mass() - ach.pType().mass());
+
+    t1->column("chrgl", chl["charg"]);     
+    t1->column("chl", chl["chanel"]);
+    t1->column("ml", lam.mass());
+
     t1->column("rm2n", (beam - u.p()).m2());
     t1->column("rm2l", (beam - (u.p() - lam.p())).m2());
     t1->column("rm2nu", (beam - (u.p() - lam.p() + lam.child(0).p() + lam.child(1).p())).m2());
 
     t1->dumpData();
+
+
+    //
+
+    t2->column("en", pStar(u, elec, posi).e());
+    t2->column("ecm", ecm);
+    t2->column("p", pStar(u, elec, posi).vect().mag());
+    t2->column("ntr", ntr);
+    
+    t2->column("chu", chu["chanel"]); 
+
+    t2->column("chrgach", chach["charg"]);
+    t2->column("chach", chach["chanel"]);
+    t2->column("mach", ach.mass() - ach.pType().mass());
+
+    t2->column("rm2lc", (beam - u.p()).m2());
+
+    t2->dumpData();
 
 
 *status = 1;
