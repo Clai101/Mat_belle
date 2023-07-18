@@ -8,7 +8,7 @@ namespace Belle {
 using namespace std;
 void User_reco::hist_def( void )
 { extern BelleTupleManager* BASF_Histogram;    
-  t1 = BASF_Histogram->ntuple ("lmbda",
+  t1 = BASF_Histogram->ntuple ("lmbda_lept",
     "ml mach p chu chl chach en ecm ntr rm2n rm2l rm2nu chrgl chrgach chrgU");
   t2 = BASF_Histogram->ntuple ("lmbdat",
     "en ecm p ntr chu chrgach chach mach rm2lc");
@@ -239,8 +239,8 @@ void User_reco::event ( BelleEvent* evptr, int* status ) {
   setUserInfo(lamct_m, {{"chanel", 2}, {"charg", -1}, {"barion_num", -1}});
   setUserInfo(lamct_p, {{"chanel", 2}, {"charg", 1}, {"barion_num", 1}});
 
-  combination(lamct_m, m_ptypeLAMC, ap, k_p, 0.05);
-  combination(lamct_p, m_ptypeLAMC, p, k_m, 0.05);
+  combination(lamct_m, m_ptypeLAMC, ap, k_s, 0.05);
+  combination(lamct_p, m_ptypeLAMC, p, k_s, 0.05);
   setUserInfo(lamct_m, {{"chanel", 3}, {"charg", -1}, {"barion_num", -1}});
   setUserInfo(lamct_p, {{"chanel", 3}, {"charg", 1}, {"barion_num", 1}});
 
@@ -264,6 +264,20 @@ void User_reco::event ( BelleEvent* evptr, int* status ) {
   setUserInfo(lamc_p,  {{"chanel", 2}, {"charg", 1}, {"barion_num", -1}});
   setUserInfo(lamc_m,  {{"chanel", 2}, {"charg", -1}, {"barion_num", 1}});
 
+  combination(lamc_m, m_ptypeLAMC, alam, pi_m, 0.05);
+  combination(lamc_p, m_ptypeLAMC, lam, pi_p, 0.05);
+  setUserInfo(lamc_p,  {{"chanel", 3}, {"charg", 1}, {"barion_num", -1}});
+  setUserInfo(lamc_m,  {{"chanel", 3}, {"charg", -1}, {"barion_num", 1}});
+
+  combination(lamct_m, m_ptypeLAMC, alam, pi_m);
+  combination(lamct_p, m_ptypeLAMC, lam, pi_p);
+  setUserInfo(lamc_p,  {{"chanel", 4}, {"charg", 1}, {"barion_num", -1}});
+  setUserInfo(lamc_m,  {{"chanel", 4}, {"charg", -1}, {"barion_num", 1}});
+
+  combination(lamct_m, m_ptypeLAMC, ap, k_p, pi_m, 0.05);
+  combination(lamct_p, m_ptypeLAMC, p, k_m, pi_p, 0.05);
+  setUserInfo(lamct_m, {{"chanel", 5}, {"charg", -1}, {"barion_num", -1}});
+  setUserInfo(lamct_p, {{"chanel", 5}, {"charg", 1}, {"barion_num", 1}});
 
 
   //Ups
@@ -311,9 +325,10 @@ void User_reco::event ( BelleEvent* evptr, int* status ) {
     map <string, int> chach = dynamic_cast<UserInfo&>(ach.userInfo()).channel();
     map <string, int> chu = dynamic_cast<UserInfo&>(u.userInfo()).channel();
     int chargU = 0;
+    
+    if ((beam - (u.p() - lam.p())).m2() > 3.5*3.5 and (ntr >= 1)) continue;    
         
     //cout << "chargl: " << chl["chanel"] << ", chu: " << chu["chanel"] << ", chl: " <<  chach["chanel"] << endl;
- 
 
     for (int k = 0; k < n; ++k){
       int p_charge = 0;
@@ -328,9 +343,8 @@ void User_reco::event ( BelleEvent* evptr, int* status ) {
         chargU = chargU + p_charge;
       }
     }
-    
-    
 
+    
     t1->column("en", pStar(u, elec, posi).e());
     t1->column("ecm", ecm);
     t1->column("p", pStar(u, elec, posi).vect().mag());
@@ -372,7 +386,7 @@ void User_reco::event ( BelleEvent* evptr, int* status ) {
     t2->dumpData();
 
 
-*status = 1;
+*status = 1; 
 }
 
 if (*status==1) nwritt++;

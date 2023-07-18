@@ -8,8 +8,8 @@ int main(int argc, char *argv[]) {
   std::cout << argv[1] << newl;
   std::cout << argv[2] << newl;
 
-  double down = 0;
-  double up = 10;
+  double down = -2;
+  double up = 4;
 
   if(argc >= 1){
     _name = argv[1];
@@ -48,7 +48,7 @@ int main(int argc, char *argv[]) {
           tree->Draw((_ax + " >> temp").c_str(), _cut.c_str());
         }
         else{
-          tree->Draw("en - ecm >> temp", " p <0.08");
+          tree->Draw("rm2n >> temp", " chrgu == 0 &&  (ntr == 0 ||  ntr == 1)");
           //tree->Draw("chu >> temp", "chrgl == 0");
           //tree->Draw("ml >> temp", "p < 0.8 && (ntr == 0 ||  ntr == 1) && chг >= 11 && chг <= 14" );
           //tree->Draw("en >> temp", "ntr == 0 && abs(m_sigm - 2.45397) < 0.015  && abs(m_lamc - 2.286) < 0.015 && p < 0.8");
