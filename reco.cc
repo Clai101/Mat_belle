@@ -266,18 +266,18 @@ void User_reco::event ( BelleEvent* evptr, int* status ) {
 
   combination(lamc_m, m_ptypeLAMC, alam, pi_m, 0.05);
   combination(lamc_p, m_ptypeLAMC, lam, pi_p, 0.05);
-  setUserInfo(lamc_p,  {{"chanel", 3}, {"charg", 1}, {"barion_num", -1}});
   setUserInfo(lamc_m,  {{"chanel", 3}, {"charg", -1}, {"barion_num", 1}});
+  setUserInfo(lamc_p,  {{"chanel", 3}, {"charg", 1}, {"barion_num", -1}});
 
-  combination(lamct_m, m_ptypeLAMC, alam, pi_m);
-  combination(lamct_p, m_ptypeLAMC, lam, pi_p);
-  setUserInfo(lamc_p,  {{"chanel", 4}, {"charg", 1}, {"barion_num", -1}});
+  combination(lamc_m, m_ptypeLAMC, alam, pi_m);
+  combination(lamc_p, m_ptypeLAMC, lam, pi_p);
   setUserInfo(lamc_m,  {{"chanel", 4}, {"charg", -1}, {"barion_num", 1}});
+  setUserInfo(lamc_p,  {{"chanel", 4}, {"charg", 1}, {"barion_num", -1}});
 
-  combination(lamct_m, m_ptypeLAMC, ap, k_p, pi_m, 0.05);
-  combination(lamct_p, m_ptypeLAMC, p, k_m, pi_p, 0.05);
-  setUserInfo(lamct_m, {{"chanel", 5}, {"charg", -1}, {"barion_num", -1}});
-  setUserInfo(lamct_p, {{"chanel", 5}, {"charg", 1}, {"barion_num", 1}});
+  combination(lamc_m, m_ptypeLAMC, ap, k_p, pi_m, 0.05);
+  combination(lamc_p, m_ptypeLAMC, p, k_m, pi_p, 0.05);
+  setUserInfo(lamc_m, {{"chanel", 5}, {"charg", -1}, {"barion_num", -1}});
+  setUserInfo(lamc_p, {{"chanel", 5}, {"charg", 1}, {"barion_num", 1}});
 
 
   //Ups
