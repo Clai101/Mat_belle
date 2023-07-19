@@ -326,7 +326,7 @@ void User_reco::event ( BelleEvent* evptr, int* status ) {
     map <string, int> chu = dynamic_cast<UserInfo&>(u.userInfo()).channel();
     int chargU = 0;
     
-    if ((beam - (u.p() - lam.p())).m2() > 3.5*3.5 and (ntr >= 1)) continue;    
+    if ((beam - (u.p() - lam.p())).m2() > 3.5*3.5 or (ntr >= 1)) continue;    
         
     //cout << "chargl: " << chl["chanel"] << ", chu: " << chu["chanel"] << ", chl: " <<  chach["chanel"] << endl;
 
