@@ -113,15 +113,15 @@ void User_reco::event ( BelleEvent* evptr, int* status ) {
   combination(rho_ppm, m_ptypeRHO0, pi_p, pi_p, pi_m);
   setUserInfo(rho_ppm, {{"chanel", 1}, {"charg", 1}, {"barion_num", 0}});
 
-  combination(rho, m_ptypeRHO0, pi_p, pi_m);
-  setUserInfo(rho, {{"chanel", 1}, {"charg", 0}, {"barion_num", 0}});
-  combination(rho4, m_ptypeRHO0, rho_2p, rho_2m);
-  setUserInfo(rho4, {{"chanel", 1}, {"charg", 1}, {"barion_num", 0}});
-
   combination(rho_2p, m_ptypeRHO0, pi_p, pi_p);
   setUserInfo(rho_2p, {{"chanel", 1}, {"charg", 2}, {"barion_num", 0}});
   combination(rho_2m, m_ptypeRHO0, pi_m, pi_m);
   setUserInfo(rho_2m, {{"chanel", 1}, {"charg", -2}, {"barion_num", 0}});
+
+  combination(rho, m_ptypeRHO0, pi_p, pi_m);
+  setUserInfo(rho, {{"chanel", 1}, {"charg", 0}, {"barion_num", 0}});
+  combination(rho4, m_ptypeRHO0, rho_2p, rho_2m);
+  setUserInfo(rho4, {{"chanel", 1}, {"charg", 1}, {"barion_num", 0}});
 
 
   for(std::vector<Particle>::iterator l = k_s.begin(); l!=k_s.end(); ++l) {
@@ -189,6 +189,13 @@ void User_reco::event ( BelleEvent* evptr, int* status ) {
   combination(D_m, m_ptypeDM, k_p, k_m, pi_m, 0.05);
   setUserInfo(D_m, {{"chanel", 4}, {"charg", -1}, {"barion_num", 0}});
 
+/*
+  combination(Dp, m_ptypeD0, k_p, k_m, k_p 0.05);
+  combination(Dm, m_ptypeD0B, k_m, k_m, k_p, 0.05);
+  setUserInfo(D0, {{"chanel", 7}, {"charg", 0}, {"barion_num", 0}});
+  setUserInfo(aD0, {{"chanel", 7}, {"charg", 0}, {"barion_num", 0}});
+*/
+
 
   //D0
 
@@ -223,6 +230,12 @@ void User_reco::event ( BelleEvent* evptr, int* status ) {
   combination(aD0, m_ptypeD0B, k_s, pi0, 0.05);
   setUserInfo(D0, {{"chanel", 6}, {"charg", 0}, {"barion_num", 0}});
   setUserInfo(aD0, {{"chanel", 6}, {"charg", 0}, {"barion_num", 0}});
+
+  combination(D0, m_ptypeD0, k_s, k_m, k_p 0.05);
+  combination(aD0, m_ptypeD0B, k_s, k_m, k_p, 0.05);
+  setUserInfo(D0, {{"chanel", 7}, {"charg", 0}, {"barion_num", 0}});
+  setUserInfo(aD0, {{"chanel", 7}, {"charg", 0}, {"barion_num", 0}});
+
 
 
   //Lsmbdac tag
@@ -290,6 +303,16 @@ void User_reco::event ( BelleEvent* evptr, int* status ) {
   combination(ups, m_ptypeUPS4, lamc_m, lamct_p, rho);
   setUserInfo(ups, {{"chanel", 2}});
 
+  /*
+  combination(ups, m_ptypeUPS4, lamc_p, lamct_m, rho);
+  combination(ups, m_ptypeUPS4, lamc_m, lamct_p, rho);
+  setUserInfo(ups, {{"chanel", 2}});
+
+  combination(ups, m_ptypeUPS4, lamc_p, lamct_m, pi0);
+  combination(ups, m_ptypeUPS4, lamc_m, lamct_p, pi0);
+  setUserInfo(ups, {{"chanel", 3}});
+  */
+
   combination(ups, m_ptypeUPS4, lamc_p, lamct_m, rho4);
   combination(ups, m_ptypeUPS4, lamc_m, lamct_p, rho4);
   setUserInfo(ups, {{"chanel", 3}});
@@ -326,7 +349,7 @@ void User_reco::event ( BelleEvent* evptr, int* status ) {
     map <string, int> chu = dynamic_cast<UserInfo&>(u.userInfo()).channel();
     int chargU = 0;
     
-    if ((beam - (u.p() - lam.p())).m2() > 3.5*3.5 or (ntr >= 1)) continue;    
+    if ((beam - (u.p() - lam.p())).m2() > 4*4 or (ntr >= 1)) continue;    
         
     //cout << "chargl: " << chl["chanel"] << ", chu: " << chu["chanel"] << ", chl: " <<  chach["chanel"] << endl;
 
