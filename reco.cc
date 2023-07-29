@@ -105,25 +105,6 @@ void User_reco::event ( BelleEvent* evptr, int* status ) {
   setGenHepInfoF(k_m);
   setGenHepInfoF(pi_p);
   
-  //Undetected particles
-  std::vector<Particle> ups, rho_2m, rho_2p, rho4, rho_ppm, rho_mmp, rho;
-  
-  combination(rho_mmp, m_ptypeRHO0, pi_m, pi_m, pi_p);
-  setUserInfo(rho_mmp, {{"chanel", 1}, {"charg", -1}, {"barion_num", 0}});
-  combination(rho_ppm, m_ptypeRHO0, pi_p, pi_p, pi_m);
-  setUserInfo(rho_ppm, {{"chanel", 1}, {"charg", 1}, {"barion_num", 0}});
-
-  combination(rho_2p, m_ptypeRHO0, pi_p, pi_p);
-  setUserInfo(rho_2p, {{"chanel", 1}, {"charg", 2}, {"barion_num", 0}});
-  combination(rho_2m, m_ptypeRHO0, pi_m, pi_m);
-  setUserInfo(rho_2m, {{"chanel", 1}, {"charg", -2}, {"barion_num", 0}});
-
-  combination(rho, m_ptypeRHO0, pi_p, pi_m);
-  setUserInfo(rho, {{"chanel", 1}, {"charg", 0}, {"barion_num", 0}});
-  combination(rho4, m_ptypeRHO0, rho_2p, rho_2m);
-  setUserInfo(rho4, {{"chanel", 1}, {"charg", 1}, {"barion_num", 0}});
-
-
   for(std::vector<Particle>::iterator l = k_s.begin(); l!=k_s.end(); ++l) {
     HepPoint3D V(l->mdstVee2().vx(),l->mdstVee2().vy(),0);
     Vector3 P(l->px(),l->py(),0);
@@ -164,6 +145,57 @@ void User_reco::event ( BelleEvent* evptr, int* status ) {
     }
   }
 
+  //Undetected particles
+
+  //Lambdac  
+
+  std::vector<Particle> lamc_p, lamc_m;
+
+  combination(lamc_p, m_ptypeLAMC, lam, e_p);
+  combination(lamc_m, m_ptypeLAMC, alam, e_m);
+  setUserInfo(lamc_p,  {{"chanel", 1}, {"charg", 1}, {"barion_num", -1}});
+  setUserInfo(lamc_m,  {{"chanel", 1}, {"charg", -1}, {"barion_num", 1}});
+
+  combination(lamc_p, m_ptypeLAMC, lam, mu_p);
+  combination(lamc_m, m_ptypeLAMC, alam, mu_m);
+  setUserInfo(lamc_p,  {{"chanel", 2}, {"charg", 1}, {"barion_num", -1}});
+  setUserInfo(lamc_m,  {{"chanel", 2}, {"charg", -1}, {"barion_num", 1}});
+
+  combination(lamc_m, m_ptypeLAMC, alam, pi_m, 0.05);
+  combination(lamc_p, m_ptypeLAMC, lam, pi_p, 0.05);
+  setUserInfo(lamc_m,  {{"chanel", 3}, {"charg", -1}, {"barion_num", 1}});
+  setUserInfo(lamc_p,  {{"chanel", 3}, {"charg", 1}, {"barion_num", -1}});
+
+  combination(lamc_m, m_ptypeLAMC, alam, pi_m, pi0, 0.05);
+  combination(lamc_p, m_ptypeLAMC, lam, pi_p, pi0, 0.05);
+  setUserInfo(lamc_m,  {{"chanel", 4}, {"charg", -1}, {"barion_num", 1}});
+  setUserInfo(lamc_p,  {{"chanel", 4}, {"charg", 1}, {"barion_num", -1}});
+
+  combination(lamc_m, m_ptypeLAMC, ap, k_p, pi_m, 0.05);
+  combination(lamc_p, m_ptypeLAMC, p, k_m, pi_p, 0.05);
+  setUserInfo(lamc_m, {{"chanel", 5}, {"charg", -1}, {"barion_num", -1}});
+  setUserInfo(lamc_p, {{"chanel", 5}, {"charg", 1}, {"barion_num", 1}});
+  
+  if (lamc_p.size()+lamc_m.size()==0) return;
+
+  //Rho
+
+  std::vector<Particle> ups, rho_2m, rho_2p, rho4, rho_ppm, rho_mmp, rho;
+  
+  combination(rho_mmp, m_ptypeRHO0, pi_m, pi_m, pi_p);
+  setUserInfo(rho_mmp, {{"chanel", 1}, {"charg", -1}, {"barion_num", 0}});
+  combination(rho_ppm, m_ptypeRHO0, pi_p, pi_p, pi_m);
+  setUserInfo(rho_ppm, {{"chanel", 1}, {"charg", 1}, {"barion_num", 0}});
+
+  combination(rho_2p, m_ptypeRHO0, pi_p, pi_p);
+  setUserInfo(rho_2p, {{"chanel", 1}, {"charg", 2}, {"barion_num", 0}});
+  combination(rho_2m, m_ptypeRHO0, pi_m, pi_m);
+  setUserInfo(rho_2m, {{"chanel", 1}, {"charg", -2}, {"barion_num", 0}});
+
+  combination(rho, m_ptypeRHO0, pi_p, pi_m);
+  setUserInfo(rho, {{"chanel", 1}, {"charg", 0}, {"barion_num", 0}});
+  combination(rho4, m_ptypeRHO0, rho_2p, rho_2m);
+  setUserInfo(rho4, {{"chanel", 1}, {"charg", 1}, {"barion_num", 0}});
 
   //D_pm
 
@@ -261,36 +293,6 @@ void User_reco::event ( BelleEvent* evptr, int* status ) {
   combination(lamct_p, m_ptypeLAMC, p, k_s, pi0, 0.05);
   setUserInfo(lamct_m, {{"chanel", 4}, {"charg", -1}, {"barion_num", -1}});
   setUserInfo(lamct_p, {{"chanel", 4}, {"charg", 1}, {"barion_num", 1}});
-
-
-  //Lambdac  
-
-  std::vector<Particle> lamc_p, lamc_m;
-
-  combination(lamc_p, m_ptypeLAMC, lam, e_p);
-  combination(lamc_m, m_ptypeLAMC, alam, e_m);
-  setUserInfo(lamc_p,  {{"chanel", 1}, {"charg", 1}, {"barion_num", -1}});
-  setUserInfo(lamc_m,  {{"chanel", 1}, {"charg", -1}, {"barion_num", 1}});
-
-  combination(lamc_p, m_ptypeLAMC, lam, mu_p);
-  combination(lamc_m, m_ptypeLAMC, alam, mu_m);
-  setUserInfo(lamc_p,  {{"chanel", 2}, {"charg", 1}, {"barion_num", -1}});
-  setUserInfo(lamc_m,  {{"chanel", 2}, {"charg", -1}, {"barion_num", 1}});
-
-  combination(lamc_m, m_ptypeLAMC, alam, pi_m, 0.05);
-  combination(lamc_p, m_ptypeLAMC, lam, pi_p, 0.05);
-  setUserInfo(lamc_m,  {{"chanel", 3}, {"charg", -1}, {"barion_num", 1}});
-  setUserInfo(lamc_p,  {{"chanel", 3}, {"charg", 1}, {"barion_num", -1}});
-
-  combination(lamc_m, m_ptypeLAMC, alam, pi_m);
-  combination(lamc_p, m_ptypeLAMC, lam, pi_p);
-  setUserInfo(lamc_m,  {{"chanel", 4}, {"charg", -1}, {"barion_num", 1}});
-  setUserInfo(lamc_p,  {{"chanel", 4}, {"charg", 1}, {"barion_num", -1}});
-
-  combination(lamc_m, m_ptypeLAMC, ap, k_p, pi_m, 0.05);
-  combination(lamc_p, m_ptypeLAMC, p, k_m, pi_p, 0.05);
-  setUserInfo(lamc_m, {{"chanel", 5}, {"charg", -1}, {"barion_num", -1}});
-  setUserInfo(lamc_p, {{"chanel", 5}, {"charg", 1}, {"barion_num", 1}});
 
 
   //Ups
