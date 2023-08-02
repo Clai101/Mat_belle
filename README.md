@@ -44,7 +44,7 @@
 
 * Добавить каналы $D_s^\pm$  
     * [x] $D_s^\pm \to K^+ K^- \pi^\pm$
-    * [x] $D_s^\pm \to K_s \pi^\pm$
+    * [x] $D_s^\pm \to K_S \pi^\pm$
 
 * Добавить каналы U
     * [x] $U \to \Lambda_c^\mp D_s^\pm \bar K^\mp p/\bar p$
@@ -57,3 +57,10 @@
 * [x] Записать импульс лептона
 
 
+## Эксперимент 4
+
+* [ ] Переделать эенргию фотонов checkSame
+* [ ] Добавить rho6
+* [ ] Поробовать заменить $\pi^+ \pi^- $ на $K^+ K^-$ и  $\pi^\pm \pi^0 $ на $K^\pm K_S$ 
+* [ ] Добавит канвлы $D^\pm \to K^\mp 2\pi^\pm \pi^0, \ D^\pm \to K_S \pi^pm \pi^0$ 
+* [Ссылка на структуру данных](https://belle.kek.jp/~hastings/secured/pantherdoc/b20030807_1600/)

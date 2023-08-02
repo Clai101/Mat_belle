@@ -28,11 +28,11 @@ int main(int argc, char *argv[]) {
     names.push_back(entry.path().filename().c_str()); 
   }
   
-  for (int i = 1; i <= 7 ; i++){
+  for (int i = 1; i <= 13 ; i++){
 
 
 	TCanvas *c1 = new TCanvas("c1", "c1", 800, 600);
-	TH1F *hist = new TH1F("hist", "", 100, down, up);
+	TH1F *hist = new TH1F("hist", "", 50, down, up);
 	
 	for (auto iter {names.begin()}; iter != names.end(); ++iter) {
     std::string  fname = fold + "/" + (*iter).c_str();
@@ -40,7 +40,7 @@ int main(int argc, char *argv[]) {
       TFile *input = new TFile(fname.c_str(), "read");
       TTree *tree = (TTree*)input->Get("h1");
       
-      TH1F *temp = new TH1F("temp", "", 100, down, up);
+      TH1F *temp = new TH1F("temp", "", 50, down, up);
         if(argc >= 3){
           std::string _cut = argv[2];
           tree->Draw("en >> temp", _cut.c_str());
@@ -52,7 +52,9 @@ int main(int argc, char *argv[]) {
         }
         else{
           //tree->Draw("ml >> temp", " chrgu == 0 &&  chl == 3");
-          tree->Draw("sqrt(rm2l) >> temp", ("chrgu == 0 &&  chl == 5 && rm2l > 0 && abs(mach) < 0.015 && abs(rm2n) < 0.1 && abs(ml - 2.28646) < 0.015 && chu ==" + std::to_string(i)).c_str());
+          //tree->Draw("sqrt(rm2l) >> temp", "");
+          tree->Draw("sqrt(rm2l) >> temp", ("chl <= 2 && rm2l > 0 && abs(mach) < 0.015 && ml < 2.28646 && abs(rm2n) <= 0.1 && chu == " + std::to_string(i)).c_str());
+          //tree->Draw("sqrt(rm2l) >> temp", "chl <= 4 && rm2l > 0 && abs(mach) < 0.015 && abs(ml - 2.28646) < 0.015" /*+ std::to_string(i)).c_str()*/);
           //tree->Draw("chu >> temp", "chrgl == 0");
           //tree->Draw("ml >> temp", "p < 0.8 && (ntr == 0 ||  ntr == 1) && chг >= 11 && chг <= 14" );
           //tree->Draw("en >> temp", "ntr == 0 && abs(m_sigm - 2.45397) < 0.015  && abs(m_lamc - 2.286) < 0.015 && p < 0.8");
@@ -64,11 +66,11 @@ int main(int argc, char *argv[]) {
       hist->Add(temp, 1); // добавляем данные temp с коэффициентом 1
     }
 	}
-	
 	//hist->GetYaxis()->SetRangeUser(0, 100);
   hist->Draw("[]");
-  c1->Print(("./results/" + _name + "_chu" + std::to_string(i) + ".root").c_str());
+  c1->Print(("./results/" +  _name + "_chu" + std::to_string(i) + ".root").c_str());
   }
+  
   
   return 0;
 }

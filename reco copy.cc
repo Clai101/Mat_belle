@@ -106,7 +106,6 @@ void User_reco::event ( BelleEvent* evptr, int* status ) {
   deepCopy(pi_m, all);
   deepCopy(gamma, gam);
 
-
   setGenHepInfoF(p);
   setGenHepInfoF(k_m);
   setGenHepInfoF(pi_p);
@@ -151,17 +150,6 @@ void User_reco::event ( BelleEvent* evptr, int* status ) {
     }
   }
 
-
-
-  //static int n_trash_track = 0, n_trash_str = 0, n_trash_bar = 0, n_trash_str_bar = 0;
-  int n_str = k_s.size() + k_m.size() + k_p.size() + lam.size() + alam.size();
-  if ((p.size() + ap.size() + lam.size() + alam.size() < 1.5) || n_str < 1.5) return 0;
-  if (pi_p.size() + pi_m.size() > 12.5) return 0;
-  
-  
-  /*
-  if (((pi_p.size() != pi_m.size()) && (k_s.size() + lam.size() + alam.size())) || (pi_p.size() + pi_m.size() > 12)) cout << "Happened" << endl;
-  */
   //Undetected particles
 
   //Lambdac  
@@ -183,12 +171,10 @@ void User_reco::event ( BelleEvent* evptr, int* status ) {
   setUserInfo(lamc_m,  {{"chanel", 3}, {"charg", -1}, {"barion_num", 1}});
   setUserInfo(lamc_p,  {{"chanel", 3}, {"charg", 1}, {"barion_num", -1}});
 
-/*
   combination(lamc_m, m_ptypeLAMC, alam, pi_m, pi0, 0.05);
   combination(lamc_p, m_ptypeLAMC, lam, pi_p, pi0, 0.05);
   setUserInfo(lamc_m,  {{"chanel", 4}, {"charg", -1}, {"barion_num", 1}});
   setUserInfo(lamc_p,  {{"chanel", 4}, {"charg", 1}, {"barion_num", -1}});
-*/
 
   combination(lamc_m, m_ptypeLAMC, ap, k_p, pi_m, 0.05);
   combination(lamc_p, m_ptypeLAMC, p, k_m, pi_p, 0.05);
@@ -345,16 +331,8 @@ void User_reco::event ( BelleEvent* evptr, int* status ) {
   combination(ups, m_ptypeUPS4, lamc_m, lamct_p, rho);
   setUserInfo(ups, {{"chanel", 3}});
 
-  combination(ups, m_ptypeUPS4, lamc_p, lamct_m, rho, pi0);
-  combination(ups, m_ptypeUPS4, lamc_m, lamct_p, rho, pi0);
-  setUserInfo(ups, {{"chanel", 3}});
-
   combination(ups, m_ptypeUPS4, lamc_p, lamct_m, rho4);
   combination(ups, m_ptypeUPS4, lamc_m, lamct_p, rho4);
-  setUserInfo(ups, {{"chanel", 4}});
-
-  combination(ups, m_ptypeUPS4, lamc_p, lamct_m, rho4, pi0);
-  combination(ups, m_ptypeUPS4, lamc_m, lamct_p, rho4, pi0);
   setUserInfo(ups, {{"chanel", 4}});
 
 
@@ -401,13 +379,14 @@ void User_reco::event ( BelleEvent* evptr, int* status ) {
   combination(ups, m_ptypeUPS4, lamc_p, Ds_m, alam);
   setUserInfo(ups,  {{"chanel", 12}});
   
-  combination(ups, m_ptypeUPS4, lamc_m, Ds_p, k_m, p);
-  combination(ups, m_ptypeUPS4, lamc_p, Ds_m, k_p, ap);
+  combination(ups, m_ptypeUPS4, lamc_m, D_p, k_m, p);
+  combination(ups, m_ptypeUPS4, lamc_p, D_m, k_p, ap);
   setUserInfo(ups,  {{"chanel", 13}});
 
-
+    
   
   for(int j=0; j<ups.size(); ++j){
+    cout << "1 \n";
     Particle u=ups[j];
 
     short ntr=0;
@@ -415,10 +394,13 @@ void User_reco::event ( BelleEvent* evptr, int* status ) {
     for(int jj=0; jj<all.size(); ++jj) 
     if (!checkSame(all[jj],u)) ntr++;
 
+    cout << "2 st \n";
 
     float en_gam=0;
     for(int jj=0; jj<gam.size(); ++jj) 
     en_gam = en_gam + pStar(gam[jj], elec, posi).e();
+
+    cout << "2 end \n";
 
 
     Particle lam = u.child(0);
@@ -448,33 +430,48 @@ void User_reco::event ( BelleEvent* evptr, int* status ) {
     }
     */
 
-
-
+    cout << "3 st\n";
+    
     t1->column("en", pStar(u, elec, posi).e());
     t1->column("ecm", ecm);
     t1->column("p", pStar(u, elec, posi).vect().mag());
     t1->column("ntr", ntr);
     t1->column("en_gam", en_gam);
 
+    cout << "3 end \n";
+
+    cout << "1 \n";
+
     t1->column("chu", chu["chanel"]);     
+    //t1->column("chrgU", chargU);
+
+    cout << "2 \n";
 
     t1->column("chach", chach["chanel"]);
     t1->column("chrgach", chach["charg"]);
     t1->column("mach", ach.mass() - ach.pType().mass());
 
+    cout << "3 \n";
+
     t1->column("chrgl", chl["charg"]);     
     t1->column("chl", chl["chanel"]);
     t1->column("ml", lam.mass());
+
+    cout << "4 \n";
 
     t1->column("rm2n", (beam - u.p()).m2());
     t1->column("rm2l", (beam - (u.p() - lam.p())).m2());
     t1->column("rm2nu", (beam - (u.p() - lam.p() + lam.child(0).p() + lam.child(1).p())).m2());
 
-    if(chl["chanel"] <= 2){
+
+    cout << "4 st \n";
+
+    if(chl["charg"] <= 2){
       t1->column("pl", pStar(lam.child(1), elec, posi).vect().mag());}
     else{
       t1->column("pl", 0);}
     
+    cout << "4 end \n";
 
     t1->dumpData();
 
@@ -500,9 +497,8 @@ void User_reco::event ( BelleEvent* evptr, int* status ) {
 *status = 1; 
 }
 
-if (*status==1) {nwritt++;
-  cout << "Chac " << pi_p.size() << " " <<  pi_m.size() << " ntrack " << pi_p.size() + pi_m.size() << " ks_size " << k_s.size() << " lam size " << lam.size() + alam.size() <<endl;
-}
+if (*status==1) nwritt++;
+
 }
 
 #if defined(BELLE_NAMESPACE)
