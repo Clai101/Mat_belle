@@ -342,6 +342,7 @@ void User_reco::event ( BelleEvent* evptr, int* status ) {
 
   std::vector<Particle> tool, atool;
 
+<<<<<<< HEAD
   combination(kl, m_ptypeLAMC, k_p, lam);
   combination(akl, m_ptypeLAMC, k_m, alam);
   setUserInfo(kl, {{"chanel", 1}, {"charg", 1}, {"barion_num", 1}});
@@ -352,6 +353,12 @@ void User_reco::event ( BelleEvent* evptr, int* status ) {
   setUserInfo(pkk, {{"chanel", 1}, {"charg", 0}, {"barion_num", 1}});
   setUserInfo(apkk, {{"chanel", 1}, {"charg", 0}, {"barion_num", -1}});
 
+=======
+  combination(tool, m_ptypeLAMC, k_p, lam, pi0);
+  combination(atool, m_ptypeLAMC, k_p, lam, pi0);
+  setUserInfo(tool, {{"chanel", 1}, {"charg", 1}, {"barion_num", 1}});
+  setUserInfo(atool, {{"chanel", 1}, {"charg", -1}, {"barion_num", -1}});
+>>>>>>> 7324ce4330c328cd89dd7450e37a73fb6894deb9
 
   //Ups
   
@@ -369,11 +376,19 @@ void User_reco::event ( BelleEvent* evptr, int* status ) {
 
   combination(ups, m_ptypeUPS4, lamc_p, lamct_m, rho, pi0);
   combination(ups, m_ptypeUPS4, lamc_m, lamct_p, rho, pi0);
+<<<<<<< HEAD
   setUserInfo(ups, {{"chanel", 4}});
+=======
+  setUserInfo(ups, {{"chanel", 3}});
+>>>>>>> 7324ce4330c328cd89dd7450e37a73fb6894deb9
 
   combination(ups, m_ptypeUPS4, lamc_p, lamct_m, rho4);
   combination(ups, m_ptypeUPS4, lamc_m, lamct_p, rho4);
   setUserInfo(ups, {{"chanel", 5}});
+
+  combination(ups, m_ptypeUPS4, lamc_p, lamct_m, rho4, pi0);
+  combination(ups, m_ptypeUPS4, lamc_m, lamct_p, rho4, pi0);
+  setUserInfo(ups, {{"chanel", 4}});
 
 
   combination(ups, m_ptypeUPS4, lamc_m, D0, p);
@@ -390,6 +405,17 @@ void User_reco::event ( BelleEvent* evptr, int* status ) {
 
   combination(ups, m_ptypeUPS4, lamc_m, D0, p, rho4);
   combination(ups, m_ptypeUPS4, lamc_p, aD0, ap, rho4);
+<<<<<<< HEAD
+=======
+  setUserInfo(ups, {{"chanel", 7}});
+
+  combination(ups, m_ptypeUPS4, lamc_m, D0, k_p, lam);
+  combination(ups, m_ptypeUPS4, lamc_p, aD0, k_m, alam);
+  setUserInfo(ups, {{"chanel", 8}});
+
+  combination(ups, m_ptypeUPS4, lamc_m, D0, tool);
+  combination(ups, m_ptypeUPS4, lamc_p, aD0, atool);
+>>>>>>> 7324ce4330c328cd89dd7450e37a73fb6894deb9
   setUserInfo(ups, {{"chanel", 9}});
 
   combination(ups, m_ptypeUPS4, lamc_m, D0, tool);
@@ -420,9 +446,15 @@ void User_reco::event ( BelleEvent* evptr, int* status ) {
   
   combination(ups, m_ptypeUPS4, lamc_m, Ds_p, k_m, p);
   combination(ups, m_ptypeUPS4, lamc_p, Ds_m, k_p, ap);
+<<<<<<< HEAD
   setUserInfo(ups,  {{"chanel", 16}});
 
 
+=======
+  setUserInfo(ups,  {{"chanel", 13}});
+
+
+>>>>>>> 7324ce4330c328cd89dd7450e37a73fb6894deb9
   
   for(int j=0; j<ups.size(); ++j){
     Particle u=ups[j];
@@ -433,12 +465,18 @@ void User_reco::event ( BelleEvent* evptr, int* status ) {
     if (!checkSame(all[jj],u)) ntr++;
 
 
+<<<<<<< HEAD
     float en_gam=0, enc _gam=0;
     for(int jj=0; jj<gam.size(); ++jj){
     if (!checkSame(gam[jj],u)){
       enc_gam = en_gam + pStar(gam[jj], elec, posi).e();
       en_gam = en_gam + p(gam[jj], elec, posi).e();
     }} 
+=======
+    float en_gam=0;
+    for(int jj=0; jj<gam.size(); ++jj) 
+    en_gam = en_gam + pStar(gam[jj], elec, posi).e();
+>>>>>>> 7324ce4330c328cd89dd7450e37a73fb6894deb9
 
 
     Particle lam = u.child(0);
@@ -453,6 +491,26 @@ void User_reco::event ( BelleEvent* evptr, int* status ) {
     cout << "chargl: " << chl["chanel"] << ", chu: " << chu["chanel"] << ", chl: " <<  chach["chanel"] << endl;
 
 
+<<<<<<< HEAD
+=======
+    /*
+    for (int k = 0; k < n; ++k){
+      int p_charge = 0;
+      if ((chu["chanel"] >= 4 & k == 2) || (chu["chanel"] == 6 & k == 3) || (chu["chanel"] == 5 & k == 3)){
+        p_charge = u.child(k).charge();
+      }
+      else{
+        map <string, int> inf = dynamic_cast<UserInfo&>(u.child(k).userInfo()).channel();
+        p_charge = inf["charg"];
+      }
+      if (p_charge != 0){
+        chargU = chargU + p_charge;
+      }
+    }
+    */
+
+
+>>>>>>> 7324ce4330c328cd89dd7450e37a73fb6894deb9
 
     t1->column("en", pStar(u, elec, posi).e());
     t1->column("ecm", ecm);
