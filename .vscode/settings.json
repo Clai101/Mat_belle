@@ -60,6 +60,10 @@
         "stop_token": "cpp",
         "streambuf": "cpp",
         "thread": "cpp",
-        "typeinfo": "cpp"
+        "typeinfo": "cpp",
+        "sqr_rm2l.C": "cpp",
+        "RM.C": "cpp",
+        "noname.C": "cpp",
+        "fstream": "cpp"
     }
 }
