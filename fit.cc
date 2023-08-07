@@ -1,9 +1,9 @@
 #include<test.h>
 
 
-const int n_bins = 100;
-double min_val = 1.5;
-double max_val = 3.5;
+int n_bins;
+double min_val;
+double max_val;
 
 double logLikelihood;
 
@@ -11,9 +11,9 @@ double logLikelihood;
 const int n_par = 22;
 
 
-std::vector<double> result(n_bins);
-std::vector<double> result1(n_bins);
-std::vector<double> data1(n_bins);
+std::vector<double> result;
+std::vector<double> result1;
+std::vector<double> data1;
 
 
 std::vector<std::string> split(const std::string &s) {
@@ -41,7 +41,7 @@ double CHE(double x, double *par) {
   T_5 = 16*y*y*y*y*y - 2*y*y*y + 5*y;
   T_6 = 32*y*y*y*y*y*y - 48*y*y*y*y + 18*y*y - 1;
 
-  return (1 + par[15]*T_1 + par[16]*T_2 + par[17]*T_3);// + par[15]*T_4);
+  return (T_0 + par[15]*T_1 + par[16]*T_2 + par[17]*T_3);// + par[15]*T_4);
 }
 
 
@@ -123,15 +123,23 @@ void fcn1(int &npar, double *grad, double &fval, double *par, int iflag) {
 
 int main() {
 
-  TH1F *hist = new TH1F("hist", "", 100, min_val, max_val);
   
   std::string  fname = "results/sqr_rm2l.root";
 
   TFile miofile(fname.c_str(),"read");
-  TH1F *hist1;// = new TH1F("hist1", "", 100, min_val, max_val);
-  //hist1->Draw();
+  TH1F *hist1;
   TCanvas *c2 = (TCanvas*)miofile.Get("c1");
   hist1 = (TH1F*)c2->GetPrimitive("hist");
+  
+  n_bins = hist1->GetNbinsX();
+  min_val = hist1->GetBinLowEdge(1);
+  max_val = hist1->GetBinLowEdge(n_bins+1);  
+
+  TH1F *hist = new TH1F("hist", "", n_bins, min_val, max_val);
+
+  result.resize(n_bins);
+  result1.resize(n_bins);
+  data1.resize(n_bins);
 
   TCanvas *c11 = new TCanvas("c11", "c11",72,101,700,500);
   c11->Range(1.897901,-48.82378,2.026446,256.9672);
