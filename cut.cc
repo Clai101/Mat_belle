@@ -65,7 +65,9 @@ int main(int argc, char *argv[]) {
   std::string out;
   std::string cut = " ";
   std::vector<int> chu;
+  std::vector<int> chach;
   bool chub = false;
+  bool chachb = false;
   int nbins = 100;
   float down, up;
 
@@ -92,6 +94,9 @@ int main(int argc, char *argv[]) {
     if (iter.find("__chu = ") != std::string::npos){
       chu = parseString(rm_sub_str(iter, "__chu = ")); 
       chub = true;}
+    if (iter.find("__chach = ") != std::string::npos){
+      chach = parseString(rm_sub_str(iter, "__chach = ")); 
+      chachb = true;}
     if (iter.find("__nbins = ") != std::string::npos){
       nbins = std::stoi(rm_sub_str(iter, "__nbins = "));}
   }
@@ -107,6 +112,12 @@ int main(int argc, char *argv[]) {
   for (auto &entry : fs::directory_iterator(path_name))
     names.push_back(entry.path().filename().c_str()); 
 
+  float tdown = 0, tup = 0;
+
+
+  if (up) tup = up;
+  if (down) tdown = down;
+
   for (auto iter {names.begin()}; iter != names.end(); ++iter) {
     std::string  fname = fold + "/" + (*iter).c_str();
     if (fname.find(ext) != std::string::npos){
@@ -117,16 +128,53 @@ int main(int argc, char *argv[]) {
 
       break;
   }}
-  std::cout << "up, down: " << up << "   " << down << newl;
 
+  if (tup) up = tup;
+  if (tdown) down = tdown;
+
+  std::cout << "up, down: " << up << "   " << down << newl;
 	
+  if(chachb){
+    TCanvas *c2 = new TCanvas("c2", "c2", 6400, 6400);
+    int sqr_l = ceil(sqrt(chach.size()));
+    c2->Divide(sqr_l, sqr_l);
+    int j = 1;
+    for (auto i {chach.begin()}; i != chach.end(); ++i, j++){
+      TCanvas *c1 = new TCanvas("c1", "c1", 6400, 6400);
+      TH1F *hist = new TH1F("hist", "", nbins, down, up);
+      TH1F *hist2 = new TH1F("hist", "", nbins, down, up);
+      for (auto iter = names.begin(); iter != names.end(); ++iter) {
+        std::string  fname = fold + "/" + (*iter).c_str();
+        if (fname.find(ext) != std::string::npos){
+          TFile *input = new TFile(fname.c_str(), "read");
+          TTree *tree = (TTree*)input->Get("h1");
+          TH1F *temp = new TH1F("temp", "", nbins, down, up);
+          tree->Draw((out + " >> temp").c_str(), (cut + " && chach == " + std::to_string(*i)).c_str());
+          hist->Add(temp, 1);
+          input->Close();
+        }}
+        hist->Draw();
+        c2->cd(j);
+        hist2->Add(hist, 1);
+        hist2->Draw();
+        
+        mkdir(("./results/" + _name).c_str(), 0777);
+        mkdir(("./results/" + _name + "/" + "root").c_str(), 0777);
+        mkdir(("./results/" + _name + "/" + "pdf").c_str(), 0777);
+        c1->Print(("./results/" + _name + "/" + "root" + "/" + _name + "_chach" + std::to_string(*i) + ".root").c_str());
+        c1->Print(("./results/" + _name + "/" + "pdf" + "/" + _name + "_chach" + std::to_string(*i) + ".pdf").c_str());
+      }
+      c2->Print(("./results/" + _name + "/" + _name + "_chach" + ".pdf").c_str());
+      c2->Print(("./results/" + _name + "/" + _name + "_chach" + ".root").c_str());
+  }
+
   if (chub){
-  TCanvas *c2 = new TCanvas("c2", "c2", 1600, 1600);
+  TCanvas *c2 = new TCanvas("c2", "c2", 6400, 6400);
   int sqr_l = ceil(sqrt(chu.size()));
   c2->Divide(sqr_l, sqr_l);
   int j = 1;
   for (auto i {chu.begin()}; i != chu.end(); ++i, j++){
-    TCanvas *c1 = new TCanvas("c1", "c1", 1600, 1600);
+    TCanvas *c1 = new TCanvas("c1", "c1", 6400, 6400);
     TH1F *hist = new TH1F("hist", "", nbins, down, up);
     TH1F *hist2 = new TH1F("hist", "", nbins, down, up);
     for (auto iter = names.begin(); iter != names.end(); ++iter) {
@@ -162,7 +210,6 @@ int main(int argc, char *argv[]) {
       if (fname.find(ext) != std::string::npos){
         TFile *input = new TFile(fname.c_str(), "read");
         TTree *tree = (TTree*)input->Get("h1");
-        std::cout << "up, down: " << up << "   " << down << newl;
         TH1F *temp = new TH1F("temp", "", nbins, down, up);
         tree->Draw((out + " >> temp").c_str(), (cut).c_str());
         hist->Add(temp, 1);

@@ -109,7 +109,9 @@ void fcn1(int &npar, double *grad, double &fval, double *par, int iflag) {
     double nn = data1[j];
     if (mu > 0) {
       if (nn > 0)
-	fval += 2.0*(mu-nn+nn*log(fabs(nn/mu)));
+	//fval += 2.0*(mu-nn+nn*log(fabs(nn/mu)));
+	fval += (mu-nn)*(mu-nn)/nn;
+	
       else
 	fval += 2.0*mu;
     }
@@ -124,7 +126,7 @@ void fcn1(int &npar, double *grad, double &fval, double *par, int iflag) {
 int main() {
 
   
-  std::string  fname = "results/sqr_rm2l.root";
+  std::string  fname = "results/chl_3_cut_ml_mach/root/chl_3_cut_ml_mach_chu5.root";
 
   TFile miofile(fname.c_str(),"read");
   TH1F *hist1;
@@ -217,7 +219,7 @@ int main() {
 
 
 
-  printf("fval is %f\n",logLikelihood);
+  printf("fval is %f\n",logLikelihood/(n_bins - 6));
   c11->SaveAs("./results/RM.png");
   return 0;
 }
