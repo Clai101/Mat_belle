@@ -9,7 +9,7 @@ using namespace std;
 void User_reco::hist_def( void )
 { extern BelleTupleManager* BASF_Histogram;    
   t1 = BASF_Histogram->ntuple ("lmbda_lept",
-    "ml mach p chu chl chach en rm2l_mc ecm ntr rm2n fox rm2l rm2nu chrgl chrgach en_gam enc_gam pl");
+    "all_tg_ex ml mach p chu chl chach en rm2l_mc ecm ntr rm2n fox rm2l rm2nu chrgl chrgach en_gam enc_gam pl");
   /*
   t2 = BASF_Histogram->ntuple ("lmbdat",
     "en ecm p ntr chu chrgach chach mach rm2lc");
@@ -176,7 +176,7 @@ void User_reco::event ( BelleEvent* evptr, int* status ) {
   setGenHepInfoF(ap);
   setGenHepInfoF(k_p);
   setGenHepInfoF(pi_m);
-  setGenHepInfoP(pi_0);
+  setGenHepInfoP(pi0);
   setGenHepInfoKs(k_s);
 
 
@@ -210,6 +210,66 @@ void User_reco::event ( BelleEvent* evptr, int* status ) {
   setUserInfo(lamc_p, {{"chanel", 5}, {"charg", 1}, {"barion_num", 1}});
   
   if (lamc_p.size()+lamc_m.size()==0) return;
+
+  //Rho
+
+  std::vector<Particle> ups, rho_2m, rho_2p, rho4, rho_ppm, rho_mmp, rho_pp, rho_mm, rho;
+  
+  combination(rho_mmp, m_ptypeRHO0, pi_m, pi_m, pi_p);
+  setUserInfo(rho_mmp, {{"chanel", 1}, {"charg", -1}, {"barion_num", 0}});
+  combination(rho_ppm, m_ptypeRHO0, pi_p, pi_p, pi_m);
+  setUserInfo(rho_ppm, {{"chanel", 1}, {"charg", 1}, {"barion_num", 0}});
+
+  combination(rho_mm, m_ptypeRHO0, pi_m, pi_m);
+  setUserInfo(rho_mm, {{"chanel", 1}, {"charg", -2}, {"barion_num", 0}});
+  combination(rho_pp, m_ptypeRHO0, pi_p, pi_p);
+  setUserInfo(rho_pp, {{"chanel", 1}, {"charg", 2}, {"barion_num", 0}});
+
+  combination(rho, m_ptypeRHO0, pi_p, pi_m);
+  setUserInfo(rho, {{"chanel", 1}, {"charg", 0}, {"barion_num", 0}});
+  combination(rho4, m_ptypeRHO0, rho_pp, rho_mm);
+  setUserInfo(rho4, {{"chanel", 1}, {"charg", 1}, {"barion_num", 0}});
+
+  //D_pm
+
+  std::vector<Particle> D_p, D_m;
+
+  combination(D_p, m_ptypeDP, k_m, rho_pp, 0.05);
+  setUserInfo(D_p,  {{"chanel", 1}, {"charg", 1}, {"barion_num", 0}});
+  combination(D_m, m_ptypeDM, k_p, rho_mm, 0.05);
+  setUserInfo(D_m,  {{"chanel", 1}, {"charg", -1}, {"barion_num", 0}});
+
+  combination(D_p, m_ptypeDP, k_m, rho_pp, pi0, 0.05);
+  setUserInfo(D_p,  {{"chanel", 2}, {"charg", 1}, {"barion_num", 0}});
+  combination(D_m, m_ptypeDM, k_p, rho_mm, pi0, 0.05);
+  setUserInfo(D_m,  {{"chanel", 2}, {"charg", -1}, {"barion_num", 0}});
+
+  combination(D_p, m_ptypeDP, k_s, pi_p, 0.05);
+  setUserInfo(D_p, {{"chanel", 3}, {"charg", 1}, {"barion_num", 0}});
+  combination(D_m, m_ptypeDM, k_s, pi_m, 0.05);
+  setUserInfo(D_m, {{"chanel", 3}, {"charg", -1}, {"barion_num", 0}});
+
+  combination(D_p, m_ptypeDP, k_s, pi_p, pi0, 0.05);
+  setUserInfo(D_p, {{"chanel", 4}, {"charg", 1}, {"barion_num", 0}});
+  combination(D_m, m_ptypeDM, k_s, pi_m, pi0, 0.05);
+  setUserInfo(D_m, {{"chanel", 4}, {"charg", -1}, {"barion_num", 0}});
+
+  combination(D_p, m_ptypeDP, k_s, rho_ppm, 0.05);
+  setUserInfo(D_p, {{"chanel", 5}, {"charg", 1}, {"barion_num", 0}});
+  combination(D_m, m_ptypeDM, k_s, rho_mmp, 0.05);
+  setUserInfo(D_m, {{"chanel", 5}, {"charg", -1}, {"barion_num", 0}});
+
+  combination(D_p, m_ptypeDP, k_p, k_m, pi_p, 0.05);
+  setUserInfo(D_p, {{"chanel", 6}, {"charg", 1}, {"barion_num", 0}});
+  combination(D_m, m_ptypeDM, k_p, k_m, pi_m, 0.05);
+  setUserInfo(D_m, {{"chanel", 6}, {"charg", -1}, {"barion_num", 0}});
+
+/*
+  combination(Dp, m_ptypeD0, k_p, k_m, k_p 0.05);
+  combination(Dm, m_ptypeD0B, k_m, k_m, k_p, 0.05);
+  setUserInfo(D0, {{"chanel", 7}, {"charg", 0}, {"barion_num", 0}});
+  setUserInfo(aD0, {{"chanel", 7}, {"charg", 0}, {"barion_num", 0}});
+*/
 
   //D0
 
@@ -245,6 +305,22 @@ void User_reco::event ( BelleEvent* evptr, int* status ) {
   setUserInfo(D0, {{"chanel", 6}, {"charg", 0}, {"barion_num", 0}});
   setUserInfo(aD0, {{"chanel", 6}, {"charg", 0}, {"barion_num", 0}});
 
+  //D_s
+
+  std::vector<Particle> Ds_p, Ds_m;
+
+  combination(Ds_p, m_ptypeDSP, k_p, k_m, pi_p, 0.05);
+  combination(Ds_m, m_ptypeDSM, k_m, k_p, pi_m, 0.05);
+  setUserInfo(Ds_p, {{"chanel", 1}, {"charg", 0}, {"barion_num", 0}});
+  setUserInfo(Ds_m, {{"chanel", 1}, {"charg", 0}, {"barion_num", 0}});
+
+  combination(Ds_p, m_ptypeDSP, k_s, k_p, 0.05);
+  combination(Ds_m, m_ptypeDSM, k_s, k_m, 0.05);
+  setUserInfo(Ds_p, {{"chanel", 2}, {"charg", 0}, {"barion_num", 0}});
+  setUserInfo(Ds_m, {{"chanel", 2}, {"charg", 0}, {"barion_num", 0}});
+
+
+
   //Lsmbdac tag
 
   std::vector<Particle> lamct_p, lamct_m;
@@ -269,14 +345,91 @@ void User_reco::event ( BelleEvent* evptr, int* status ) {
   setUserInfo(lamct_m, {{"chanel", 4}, {"charg", -1}, {"barion_num", -1}});
   setUserInfo(lamct_p, {{"chanel", 4}, {"charg", 1}, {"barion_num", 1}});
 
+  //Tool
+
+  std::vector<Particle> kl, akl, pkk, apkk;
+
+  combination(kl, m_ptypeLAMC, k_p, lam);
+  combination(akl, m_ptypeLAMC, k_m, alam);
+  setUserInfo(kl, {{"chanel", 1}, {"charg", 1}, {"barion_num", 1}});
+  setUserInfo(akl, {{"chanel", 1}, {"charg", -1}, {"barion_num", -1}});
+
+  combination(pkk, m_ptypeLAMC, p, k_m, k_s);
+  combination(apkk, m_ptypeLAMC, ap, k_p, k_s);
+  setUserInfo(pkk, {{"chanel", 1}, {"charg", 0}, {"barion_num", 1}});
+  setUserInfo(apkk, {{"chanel", 1}, {"charg", 0}, {"barion_num", -1}});
+
   //Ups
   
+  /*
+  combination(ups, m_ptypeUPS4, lamc_p, lamct_m);
+  combination(ups, m_ptypeUPS4, lamc_m, lamct_p);
+  setUserInfo(ups, {{"chanel", 1}});
+
+  combination(ups, m_ptypeUPS4, lamc_p, lamct_m, pi0);
+  combination(ups, m_ptypeUPS4, lamc_m, lamct_p, pi0);
+  setUserInfo(ups, {{"chanel", 2}});
+  */
+
+  combination(ups, m_ptypeUPS4, lamc_p, lamct_m, rho);
+  combination(ups, m_ptypeUPS4, lamc_m, lamct_p, rho);
+  setUserInfo(ups, {{"chanel", 3}});
+
+  combination(ups, m_ptypeUPS4, lamc_p, lamct_m, rho, pi0);
+  combination(ups, m_ptypeUPS4, lamc_m, lamct_p, rho, pi0);
+  setUserInfo(ups, {{"chanel", 4}});
+
+  combination(ups, m_ptypeUPS4, lamc_p, lamct_m, rho4);
+  combination(ups, m_ptypeUPS4, lamc_m, lamct_p, rho4);
+  setUserInfo(ups, {{"chanel", 5}});
+
+
+  combination(ups, m_ptypeUPS4, lamc_m, D0, p);
+  combination(ups, m_ptypeUPS4, lamc_p, aD0, ap);
+  setUserInfo(ups, {{"chanel", 6}});
 
   combination(ups, m_ptypeUPS4, lamc_m, D0, p, pi0);
   combination(ups, m_ptypeUPS4, lamc_p, aD0, ap, pi0);
   setUserInfo(ups, {{"chanel", 7}});
 
+  combination(ups, m_ptypeUPS4, lamc_m, D0, p, rho);
+  combination(ups, m_ptypeUPS4, lamc_p, aD0, ap, rho);
+  setUserInfo(ups, {{"chanel", 8}});
 
+  combination(ups, m_ptypeUPS4, lamc_m, D0, p, rho4);
+  combination(ups, m_ptypeUPS4, lamc_p, aD0, ap, rho4);
+  setUserInfo(ups, {{"chanel", 9}});
+
+  combination(ups, m_ptypeUPS4, lamc_m, D0, kl);
+  combination(ups, m_ptypeUPS4, lamc_p, aD0, akl);
+  setUserInfo(ups, {{"chanel", 10}});
+
+  combination(ups, m_ptypeUPS4, lamc_m, D0, kl, pi0);
+  combination(ups, m_ptypeUPS4, lamc_p, aD0, akl, pi0);
+  setUserInfo(ups, {{"chanel", 11}});
+
+
+  combination(ups, m_ptypeUPS4, lamc_m, D_p, p, pi_m);
+  combination(ups, m_ptypeUPS4, lamc_p, D_m, ap, pi_p);
+  setUserInfo(ups,  {{"chanel", 12}});
+  
+  combination(ups, m_ptypeUPS4, lamc_m, D_p, p, rho_mmp);
+  combination(ups, m_ptypeUPS4, lamc_p, D_m, ap, rho_ppm);
+  setUserInfo(ups,  {{"chanel", 13}});
+
+  combination(ups, m_ptypeUPS4, lamc_m, D_p, pkk);
+  combination(ups, m_ptypeUPS4, lamc_p, D_m, apkk);
+  setUserInfo(ups,  {{"chanel", 14}});
+
+  /*
+  combination(ups, m_ptypeUPS4, lamc_m, Ds_p, lam);
+  combination(ups, m_ptypeUPS4, lamc_p, Ds_m, alam);
+  setUserInfo(ups,  {{"chanel", 15}});
+  
+  combination(ups, m_ptypeUPS4, lamc_m, Ds_p, k_m, p);
+  combination(ups, m_ptypeUPS4, lamc_p, Ds_m, k_p, ap);
+  setUserInfo(ups,  {{"chanel", 16}});
+  */
 
   setGenHepInfoT(D0);
   setGenHepInfoT(lamc_m);
@@ -306,16 +459,16 @@ void User_reco::event ( BelleEvent* evptr, int* status ) {
     Particle lam = u.child(0);
     Gen_hepevt glam=lam.relation().genHepevt();
     VectorL Plmc;
-    if (glam) Plmc=VectorL(glam.PX(), glam.PY(), glam.PZ(), glam.PE());
+    if (glam) Plmc=VectorL(glam.PX(), glam.PY(), glam.PZ(), glam.E());
     Gen_hepevt gd=u.child(1).relation().genHepevt();
     VectorL Pdmc;
-    if (gd) Pdmc=VectorL(gd.PX(), gd.PY(), gd.PZ(), gd.PE());
+    if (gd) Pdmc=VectorL(gd.PX(), gd.PY(), gd.PZ(), gd.E());
     Gen_hepevt gp=u.child(2).relation().genHepevt();
     VectorL Ppmc;
-    if (gp) Ppmc=VectorL(gp.PX(), gp.PY(), gp.PZ(), gp.PE());
+    if (gp) Ppmc=VectorL(gp.PX(), gp.PY(), gp.PZ(), gp.E());
     Gen_hepevt gpi0=u.child(3).relation().genHepevt();
     VectorL Ppi0mc;
-    if (gpi0) Ppi0mc=VectorL(gpi0.PX(), gpi0.PY(), gpi0.PZ(), gpi0.PE());
+    if (gpi0) Ppi0mc=VectorL(gpi0.PX(), gpi0.PY(), gpi0.PZ(), gpi0.E());
 
 
 

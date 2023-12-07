@@ -69,3 +69,25 @@
 * Добавил вывод нескольких графиков в один файл.
 * Добавил фиты, адаптировал их.
 * Переписал Makefile теперь можно работаь с любым С файлом.
+
+## Эксперимент 5
+
+* Убрал все собыбытия с $pi^0$
+* Добавил $D^*$ и каналы $\Lambda p D^{*+} \pi^-, \Lambda p D^{*0}$
+* Убрал все собыбытия, которые могли вдть двойноый счет с события ми из $D^{*0}$
+
+## На данный момент
+
+$e^+ e^- \to \Lambda_c^- X_c$
+* [1] $X_c \to D^0 p$
+* [2] $X_c \to D^+ p  pi^-$
+* [3] $X_c \to D^{*+} p  pi^-$
+* [4] $X_c \to D^{*0} p$
+
+./cut "out = sqrt(rm2l)" "cut = abs(mach) < 0.01 && abs(ml - 2.28646) < 0.015 && chl == 5 && abs(rm2n) < 1" "chu = 1-7" "down = 1" "up = 4" "nbins = 50"
+
+./cut "out = sqrt(rm2l)" "cut =   abs(mach) < 0.01 && abs(ml) < 0.015 && chl == 5 && abs(rm2n) < 1 && (abs(dm_dst - 0.142014) < 0.003 || chxc != 4)" "chu = chxc = 1-4" "down = 1" "up = 4" "nbins = 50" "fname = rm_lam_all_dt"
+
+./cut "out = sqrt(rm2l)" "cut = chl == 5 && abs(rm2n) < 0.01 && abs(ml) < 0.015 && (abs(mach) < 0.015 || chxc <= 2) &&  (abs(mach) < 0.03 || chxc >= 3) " "chu = chxc = 1-4" "down = 1.5" "up = 3.5" "nbins = 50" "fname = rm_lam_all_dt_new"
+
+./cut "out = 3.141592 - acos(cos_lam_)" "cut = rm2l > 0 &&  abs(sqrt(rm2l) - 2.28646) < 0.1 && chl == 5 && abs(rm2n) < 0.01 && abs(ml) < 0.015 && (abs(mach) < 0.015 || chxc <= 2) &&  (abs(mach) < 0.03 || chxc >= 3) " "chu = chxc = 1-4" "down = 0.0000000000001" "up = 0.01" "nbins = 50" "fname = p_angl_tag_taging"

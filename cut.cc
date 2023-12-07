@@ -8,6 +8,17 @@ std::string rm_sub_str(std::string str, std::string substr) {
     return str;
 }
 
+std::pair<std::string, std::string> extractStrings(const std::string& input) {
+    std::istringstream iss(input);
+    std::string left, right;
+    
+    if (std::getline(iss, left, '=')) {
+        std::getline(iss >> std::ws, right);
+    }
+    
+    return std::make_pair(left, right);
+}
+
 void FindMinMaxFromTree(TTree* tree, const std::string& varName, float& down, float& up) {
 
     TCanvas* c1 = new TCanvas("c1", "c1", 1600, 1200);
@@ -64,6 +75,7 @@ int main(int argc, char *argv[]) {
   std::string _name = "noname";
   std::string out;
   std::string cut = " ";
+  std::string iter_by = " ";
   std::vector<int> chu;
   std::vector<int> chach;
   bool chub = false;
@@ -92,7 +104,9 @@ int main(int argc, char *argv[]) {
       cut = rm_sub_str(iter, "__cut = ").c_str();
       std::cout << "cut: " << cut << newl;}
     if (iter.find("__chu = ") != std::string::npos){
-      chu = parseString(rm_sub_str(iter, "__chu = ")); 
+      std::pair<std::string, std::string> result = extractStrings(rm_sub_str(iter, "__chu = "));
+      chu = parseString(result.second); 
+      iter_by = result.first; 
       chub = true;}
     if (iter.find("__chach = ") != std::string::npos){
       chach = parseString(rm_sub_str(iter, "__chach = ")); 
@@ -149,7 +163,7 @@ int main(int argc, char *argv[]) {
           TFile *input = new TFile(fname.c_str(), "read");
           TTree *tree = (TTree*)input->Get("h1");
           TH1F *temp = new TH1F("temp", "", nbins, down, up);
-          tree->Draw((out + " >> temp").c_str(), (cut + " && chach == " + std::to_string(*i)).c_str());
+          tree->Draw((out + " >> temp").c_str(), (cut + " && " + iter_by +" == " + std::to_string(*i)).c_str());
           hist->Add(temp, 1);
           input->Close();
         }}
@@ -183,7 +197,7 @@ int main(int argc, char *argv[]) {
         TFile *input = new TFile(fname.c_str(), "read");
         TTree *tree = (TTree*)input->Get("h1");
         TH1F *temp = new TH1F("temp", "", nbins, down, up);
-        tree->Draw((out + " >> temp").c_str(), (cut + " && chu == " + std::to_string(*i)).c_str());
+        tree->Draw((out + " >> temp").c_str(), (cut + " && " + iter_by + " == " + std::to_string(*i)).c_str());
         hist->Add(temp, 1);
         input->Close();
       }}

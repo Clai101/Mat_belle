@@ -15,8 +15,7 @@ using namespace std;
 namespace Belle {
 #endif
   
-  void 
-  fitRM(const Particle &p1, const Particle &p2, const VectorL UPS, const double M_fit, 
+  void fitRM(const Particle &p1, const Particle &p2, const VectorL UPS, const double M_fit, 
 	VectorL &P_fit_1, VectorL &P_fit_2, double &chi2) {
     
     int ierr;

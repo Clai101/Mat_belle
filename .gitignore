@@ -1,4 +1,6 @@
 root
 hist
+root_mc
+hist_mc
 *.d
 *.o
