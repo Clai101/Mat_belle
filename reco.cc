@@ -16,15 +16,6 @@ void User_reco::hist_def( void )
   */
 };
 
-
-int fill_tup(Particle lamc, /*vector<Particle> all,*/ double elec, double posi, double ecm, double r2, BelleTuple *t)
-{    
-  //int chb = dynamic_cast<UserInfo&>(B.userInfo()).channel();
-  
-  return 1;
-};
-
-
 void User_reco::event ( BelleEvent* evptr, int* status ) {
   
   *status=0;
@@ -198,6 +189,11 @@ void User_reco::event ( BelleEvent* evptr, int* status ) {
   combination(lamc_p, m_ptypeLAMC, p, k_m, pi_p, 0.05);
   setUserInfo(lamc_m, {{"chanel", 5}, {"charg", -1}, {"baryon_num", -1}});
   setUserInfo(lamc_p, {{"chanel", 5}, {"charg", 1}, {"baryon_num", 1}});
+
+  combination(lamc_m, m_ptypeLAMC, ap, k_p, pi_m, 0.05);
+  combination(lamc_p, m_ptypeLAMC, p, k_m, pi_p, 0.05);
+  setUserInfo(lamc_m, {{"chanel", 5}, {"charg", -1}, {"baryon_num", -1}});
+  setUserInfo(lamc_p, {{"chanel", 5}, {"charg", 1}, {"baryon_num", 1}});
   
   if (lamc_p.size()+lamc_m.size()==0) return;
 
@@ -294,32 +290,29 @@ void User_reco::event ( BelleEvent* evptr, int* status ) {
   //cout << "Before " << D0_st.size() << '\n';
 
   for(std::vector<Particle>::iterator D = D0_st.begin(); D!=D0_st.end(); ++D) {
-    if (((((D->child(0)).mass() - (D->child(1)).mass()) > 0.015) and (dynamic_cast<UserInfo&>(D->userInfo()).channel().find("chanel")->second == 1)) or ((abs(D->mass() - (D->child(0)).mass() - 0.142014) > 0.03) and (dynamic_cast<UserInfo&>(D->userInfo()).channel().find("chanel")->second == 2))  or ((abs(D->child(0).mass() - D->child(0).pType().mass())) > 0.015)) {
-      D0_st.erase(D); --D; continue;
-    }
-  }
-
-  for(std::vector<Particle>::iterator D = D_p_st.begin(); D!=D_p_st.end(); ++D) {
-    if (((((D->child(0)).mass() - (D->child(1)).mass()) > 0.015) and (dynamic_cast<UserInfo&>(D->userInfo()).channel().find("chanel")->second == 1)) or ((abs(D->mass() - (D->child(0)).mass() - 0.142014) > 0.03) and (dynamic_cast<UserInfo&>(D->userInfo()).channel().find("chanel")->second == 2))  or ((abs(D->child(0).mass() - D->child(0).pType().mass())) > 0.015)) {
-      D_p_st.erase(D); --D; continue;
-    }
-  }
-
-  for(std::vector<Particle>::iterator D = D_m_st.begin(); D!=D_m_st.end(); ++D) {
-    if (((((D->child(0)).mass() - (D->child(1)).mass()) > 0.015) and (dynamic_cast<UserInfo&>(D->userInfo()).channel().find("chanel")->second == 1)) or ((abs(D->mass() - (D->child(0)).mass() - 0.142014) > 0.03) and (dynamic_cast<UserInfo&>(D->userInfo()).channel().find("chanel")->second == 2))  or ((abs(D->child(0).mass() - D->child(0).pType().mass())) > 0.015)) {
-      D_m_st.erase(D); --D; continue;
-    }
-  }
+    if (dynamic_cast<UserInfo&>(D->userInfo()).channel().find("chanel")->second == 1){
+      if (D->mass() - D->child(0).mass() > 0.16 or abs(D->child(0).mass() - D->child(0).pType().mass()) > 0.015){
+      aD0_st.erase(D); --D; continue;}}
+    if (dynamic_cast<UserInfo&>(D->userInfo()).channel().find("chanel")->second == 2){
+      if (abs(D->mass() - D->child(0).mass() - 0.142014) > 0.030 or abs(D->child(0).mass() - D->child(0).pType().mass()) > 0.015){
+        aD0_st.erase(D); --D; continue;}}}
 
   for(std::vector<Particle>::iterator D = aD0_st.begin(); D!=aD0_st.end(); ++D) {
+    if (dynamic_cast<UserInfo&>(D->userInfo()).channel().find("chanel")->second == 1){
+      if (D->mass() - D->child(0).mass() > 0.16 or abs(D->child(0).mass() - D->child(0).pType().mass()) > 0.015){
+      aD0_st.erase(D); --D; continue;}}
+    if (dynamic_cast<UserInfo&>(D->userInfo()).channel().find("chanel")->second == 2){
+      if (abs(D->mass() - D->child(0).mass() - 0.142014) > 0.030 or abs(D->child(0).mass() - D->child(0).pType().mass()) > 0.015){
+        aD0_st.erase(D); --D; continue;}}}
 
-    //abs(D->mass() - (D->child(0)).mass() - 0.142014) > 0.03
-    if (((((D->child(0)).mass() - (D->child(1)).mass()) > 0.015) and (dynamic_cast<UserInfo&>(D->userInfo()).channel().find("chanel")->second == 1)) or ((abs(D->mass() - (D->child(0)).mass() - 0.142014) > 0.03) and (dynamic_cast<UserInfo&>(D->userInfo()).channel().find("chanel")->second == 2))  or ((abs(D->child(0).mass() - D->child(0).pType().mass())) > 0.015)) {
-      aD0_st.erase(D); --D; continue;
-    }
-  }
-  //
-  
+  for(std::vector<Particle>::iterator D = D_p_st.begin(); D!=D_p_st.end(); ++D) {
+    if (D->mass() - D->child(0).mass() > 0.16 or abs(D->child(0).mass() - D->child(0).pType().mass()) > 0.015) {
+      D_p_st.erase(D); --D; continue;}}
+
+  for(std::vector<Particle>::iterator D = D_m_st.begin(); D!=D_m_st.end(); ++D) {
+    if (D->mass() - D->child(0).mass() > 0.16 or abs(D->child(0).mass() - D->child(0).pType().mass()) > 0.015) {
+      D_m_st.erase(D); --D; continue;}}
+
   //X_c
 
 

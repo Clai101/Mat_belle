@@ -1,4 +1,5 @@
 #include "my_belle.h"
+#include <string>
 
 
 #if defined(BELLE_NAMESPACE)
@@ -9,7 +10,7 @@ using namespace std;
 void User_reco::hist_def( void )
 { extern BelleTupleManager* BASF_Histogram;    
   t1 = BASF_Histogram->ntuple ("lmbda_lept",
-    "en nen ecm p np ntr en_gam enc_gam chxc pxc npxc mxc chach mach chl ml pl ang_l_xc nang_l_xc rm2n nrm2n rm2l nrm2l rm2nu nrm2nu chi");
+    "en nen ecm p np ntr en_gam enc_gam chxc pxc npxc mxc chach mach chl ml pl ang_l_xc nang_l_xc rm2n nrm2n rm2l nrm2l rm2nu nrm2nu fnrm2nu chi");
   /*
   t2 = BASF_Histogram->ntuple ("lmbdat",
     "en ecm p ntr chu chrgach chach mach rm2lc");
@@ -305,12 +306,9 @@ void fitRM(const Particle &p1, const Particle &p2, const VectorL UPS, const doub
 
   };
 
-int fill_tup(Particle lamc, /*vector<Particle> all,*/ double elec, double posi, double ecm, double r2, BelleTuple *t)
-{    
-  //int chb = dynamic_cast<UserInfo&>(B.userInfo()).channel();
-  
-  return 1;
-};
+void pr(VectorL p){
+  cout << p.px() << "\t|\t" << p.py() << "\t|\t" << p.pz() << "\t|\t" << p.e() << "\t|\t" << sqrt(p.m2());
+}
 
 
 void User_reco::event ( BelleEvent* evptr, int* status ) {
@@ -465,6 +463,31 @@ void User_reco::event ( BelleEvent* evptr, int* status ) {
 
   std::vector<Particle> lamc_p, lamc_m;
 
+  combination(lamc_m, m_ptypeLAMC, alam, pi_m, 0.05);
+  combination(lamc_p, m_ptypeLAMC, lam, pi_p, 0.05);
+  setUserInfo(lamc_m,  {{"chanel", 3}, {"charg", -1}, {"baryon_num", 1}});
+  setUserInfo(lamc_p,  {{"chanel", 3}, {"charg", 1}, {"baryon_num", -1}});
+
+  combination(lamc_m, m_ptypeLAMC, alam, pi_m, pi0, 0.05);
+  combination(lamc_p, m_ptypeLAMC, lam, pi_p, pi0, 0.05);
+  setUserInfo(lamc_m,  {{"chanel", 4}, {"charg", -1}, {"baryon_num", 1}});
+  setUserInfo(lamc_p,  {{"chanel", 4}, {"charg", 1}, {"baryon_num", -1}});
+
+  combination(lamc_m, m_ptypeLAMC, ap, k_p, pi_m, 0.05);
+  combination(lamc_p, m_ptypeLAMC, p, k_m, pi_p, 0.05);
+  setUserInfo(lamc_m, {{"chanel", 5}, {"charg", -1}, {"baryon_num", -1}});
+  setUserInfo(lamc_p, {{"chanel", 5}, {"charg", 1}, {"baryon_num", 1}});
+
+  //p k e/mu
+
+  if (lamc_p.size()+lamc_m.size()==0) return;
+
+  doKvFit(lamc_m);
+  doKvFit(lamc_p);
+
+  doKmvFit(lamc_m, f);
+  doKmvFit(lamc_p, f);
+
   combination(lamc_p, m_ptypeLAMC, lam, e_p);
   combination(lamc_m, m_ptypeLAMC, alam, e_m);
   setUserInfo(lamc_p,  {{"chanel", 1}, {"charg", 1}, {"baryon_num", -1}});
@@ -475,23 +498,8 @@ void User_reco::event ( BelleEvent* evptr, int* status ) {
   setUserInfo(lamc_p,  {{"chanel", 2}, {"charg", 1}, {"baryon_num", -1}});
   setUserInfo(lamc_m,  {{"chanel", 2}, {"charg", -1}, {"baryon_num", 1}});
 
-  combination(lamc_m, m_ptypeLAMC, alam, pi_m, 0.05);
-  combination(lamc_p, m_ptypeLAMC, lam, pi_p, 0.05);
-  setUserInfo(lamc_m,  {{"chanel", 3}, {"charg", -1}, {"baryon_num", 1}});
-  setUserInfo(lamc_p,  {{"chanel", 3}, {"charg", 1}, {"baryon_num", -1}});
-
-  combination(lamc_m, m_ptypeLAMC, ap, k_p, pi_m, 0.05);
-  combination(lamc_p, m_ptypeLAMC, p, k_m, pi_p, 0.05);
-  setUserInfo(lamc_m, {{"chanel", 5}, {"charg", -1}, {"baryon_num", -1}});
-  setUserInfo(lamc_p, {{"chanel", 5}, {"charg", 1}, {"baryon_num", 1}});
-  
-  if (lamc_p.size()+lamc_m.size()==0) return;
-
   doKvFit(lamc_m);
   doKvFit(lamc_p);
-
-  doKmvFit(lamc_m, f);
-  doKmvFit(lamc_p, f);
 
   std::vector<Particle> ups;
 
@@ -696,23 +704,27 @@ void User_reco::event ( BelleEvent* evptr, int* status ) {
       fitRM(x_c.child(0), x_c.child(1), beam, 2.28646, p_1, p_2, chi);
       nach = Particle(p_1,  x_c.child(0).pType());
       par2 = Particle(p_2,  x_c.child(1).pType());
-      x_c.append_daughter(nach);
-      x_c.append_daughter(par2);
+      nx_c = Particle(p_1 + p_2,  x_c.pType());
+      nx_c.append_daughter(nach);
+      nx_c.append_daughter(par2);
     }
     else{
       fitRM3(x_c.child(0), x_c.child(1), x_c.child(2), beam, 2.28646, p_1, p_2, p_3, chi);
       nach = Particle(p_1,  x_c.child(0).pType());
       par2 = Particle(p_2,  x_c.child(1).pType());
       par3 = Particle(p_3,  x_c.child(2).pType());
-      x_c.append_daughter(nach);
-      x_c.append_daughter(par2);
-      x_c.append_daughter(par3);
+      nx_c = Particle(p_1 + p_2 + p_3,  nx_c.pType());
+      nx_c.append_daughter(nach);
+      nx_c.append_daughter(par2);
+      nx_c.append_daughter(par3);
     }
+
 
     nu = Particle(lam.p() + nx_c.p(),  m_ptypeUPS4);
     nu.append_daughter(lam);
     nu.append_daughter(x_c);
       
+
 
     if ((beam - (x_c.p())).m2() > 4*4 or (ntr >= 1)) continue;    
 
@@ -746,27 +758,44 @@ void User_reco::event ( BelleEvent* evptr, int* status ) {
     t1->column("ml", chl.vmass() - lam.pType().mass());
     t1->column("pl", pStar(lam, elec, posi).vect().mag());
 
+    if ((beam - x_c.p()).m() < 2){
+    cout << "tttttttttttttttttttttttttttttttttttttttttt";
+    cout << "rml:\t" <<  (beam - x_c.p()).m()  << "\trm2n:\t" <<(beam - u.p()).m2();
+    cout << "\n\n";
+    cout << "beam:\t"; 
+    pr(beam); 
+    cout << "\n";
+    cout << "pl:\t"; 
+    pr(lam.p()); 
+    cout << "\n";
+    cout << "pxc:\t"; 
+    pr(x_c.p()); 
+    cout << "\n";
+    }
+
 
     t1->column("ang_l_xc", pStar(lam, elec, posi).vect().angle(pStar(x_c, elec, posi).vect()));
     t1->column("nang_l_xc", pStar(lam, elec, posi).vect().angle(pStar(nx_c, elec, posi).vect()));
 
     t1->column("rm2n", (beam - u.p()).m2());
     t1->column("nrm2n", (beam - nu.p()).m2());
-    
-    t1->column("rm2l", (beam - (x_c.p())).m2());
-    t1->column("nrm2l", (beam - (nx_c.p())).m2());
+    t1->column("npn", (beam - nu.p()).p().vect().mag());
+    t1->column("pn", (beam - u.p()).p().vect().mag());
+    t1->column("rm2l", (beam - x_c.p()).m());
+    t1->column("nrm2l", (beam - (nx_c.p())).m());
     
     t1->column("rm2nu", (beam - (x_c.p() + lam.child(0).p() + lam.child(1).p())).m2());
     t1->column("nrm2nu", (beam - (nx_c.p() + lam.child(0).p() + lam.child(1).p())).m2());
     
+    if(chl.channel().find("chanel")->second == 5 || chl.channel().find("chanel")->second == 4){
+      t1->column("fnrm2nu", (beam - (nx_c.p() + lam.child(0).p() + lam.child(1).p() + lam.child(2).p())).m2() );
+    }
+    else{
+      t1->column("fnrm2nu", 0);
+    }
 
     t1->column("fox", r2);
 
-
-    if(chl.channel().find("chanel")->second <= 2){
-      t1->column("pl", pStar(lam.child(1), elec, posi).vect().mag());}
-    else{
-      t1->column("pl", 0);}
     
 
     t1->dumpData();
