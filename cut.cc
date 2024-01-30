@@ -179,6 +179,7 @@ int main(int argc, char *argv[]) {
         c1->Print(("./results/" + _name + "/" + "pdf" + "/" + _name + "_chach" + std::to_string(*i) + ".pdf").c_str());
       }
       c2->Print(("./results/" + _name + "/" + _name + "_chach" + ".pdf").c_str());
+      c2->Print(("./results/" + _name + "/" + _name + "_chach" + ".png").c_str());
       c2->Print(("./results/" + _name + "/" + _name + "_chach" + ".root").c_str());
   }
 
@@ -213,6 +214,7 @@ int main(int argc, char *argv[]) {
       c1->Print(("./results/" + _name + "/" + "pdf" + "/" + _name + "_chu" + std::to_string(*i) + ".pdf").c_str());
     }
     c2->Print(("./results/" + _name + "/" + _name + "_chu" + ".pdf").c_str());
+    c2->Print(("./results/" + _name + "/" + _name + "_chu" + ".png").c_str());
     c2->Print(("./results/" + _name + "/" + _name + "_chu" + ".root").c_str());
 
   }

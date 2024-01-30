@@ -26,6 +26,25 @@ std::vector<std::string> split(const std::string &s) {
   return res;
 }
 
+std::string rm_sub_str(std::string str, std::string substr) {
+    size_t start_position_to_erase = str.find(substr);
+    if (start_position_to_erase != std::string::npos) {
+        str.erase(start_position_to_erase, substr.length());
+    }
+    return str;
+}
+
+std::pair<std::string, std::string> extractStrings(const std::string& input) {
+    std::istringstream iss(input);
+    std::string left, right;
+    
+    if (std::getline(iss, left, '=')) {
+        std::getline(iss >> std::ws, right);
+    }
+    
+    return std::make_pair(left, right);
+}
+
 
 double CHE(double x, double *par) {
   double y, T_0, T_1, T_2, T_3, T_4, T_5, T_6;
@@ -123,10 +142,21 @@ void fcn1(int &npar, double *grad, double &fval, double *par, int iflag) {
 }
 
 
-int main() {
+int main(int argc, char *argv[]) {  
+  std::cout << "_____________________________________________________" << newl;
 
-  
-  std::string  fname = "results/chl_3_cut_ml_mach/root/chl_3_cut_ml_mach_chu5.root";
+  std::string fname = "noname";
+
+  for (int i = 1; i < argc; ++i){ 
+    std::string iter = "__" + std::string(argv[i]);
+    std::cout << "iter = " << iter << newl;
+
+
+    if (iter.find("__fname = ") != std::string::npos){
+      fname = rm_sub_str(iter, "__fname = ").c_str(); 
+      std::cout << "name: " << fname << newl;}
+  }
+
 
   TFile miofile(fname.c_str(),"read");
   TH1F *hist1;
@@ -220,6 +250,6 @@ int main() {
 
 
   printf("fval is %f\n",logLikelihood/(n_bins - 6));
-  c11->SaveAs("./results/RM.png");
+  c11->SaveAs((rm_sub_str(fname, ".root").c_str() + std::string("_fit.png")).c_str());
   return 0;
 }
