@@ -163,7 +163,7 @@ int main(int argc, char *argv[]) {
           TFile *input = new TFile(fname.c_str(), "read");
           TTree *tree = (TTree*)input->Get("h1");
           TH1F *temp = new TH1F("temp", "", nbins, down, up);
-          tree->Draw((out + " >> temp").c_str(), (cut + " && " + iter_by +" == " + std::to_string(*i)).c_str());
+          tree->Draw((out + " >> temp").c_str(), (cut + " && " + iter_by +" == " + (*i)).c_str());
           hist->Add(temp, 1);
           input->Close();
         }}

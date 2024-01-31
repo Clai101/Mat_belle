@@ -6,6 +6,8 @@ double min_val;
 double max_val;
 
 double logLikelihood;
+std::string sig = "g";
+std::string back = "che(1)";
 
 
 const int n_par = 22;
@@ -60,7 +62,13 @@ double CHE(double x, double *par) {
   T_5 = 16*y*y*y*y*y - 2*y*y*y + 5*y;
   T_6 = 32*y*y*y*y*y*y - 48*y*y*y*y + 18*y*y - 1;
 
-  return (T_0 + par[15]*T_1 + par[16]*T_2 + par[17]*T_3);// + par[15]*T_4);
+
+  if (back == "che(0)") return (T_0);
+  if (back == "che(1)") return (T_0 + par[15]*T_1);
+  if (back == "che(2)") return (T_0 + par[15]*T_1 + par[16]*T_2);
+  if (back == "che(3)") return (T_0 + par[15]*T_1 + par[16]*T_2 + par[17]*T_3);
+  if (back == "che(4)") return (T_0 + par[15]*T_1 + par[16]*T_2 + par[17]*T_3 + par[15]*T_4);
+  return (T_0 + par[15]*T_1);
 }
 
 
@@ -91,8 +99,15 @@ double g_g_g(double x, double *par) {
   double g4 = exp( -(x-mean_4)*(x-mean_4) / (2*sigma2*sigma2));
   g4 /= (sqrt2pi * sigma2);
 
-
+  if (sig == "g") return g1;
+  if (sig == "g+g") return g1 + g2;
+  if (sig == "g*g") return g1 * g2;
+  if (sig == "g+g+g") return g1 + g2 + g3;
+  if (sig == "g*g*g") return g1 * g2 * g3;
+  if (sig == "g*g*g*g") return g1 * g2 * g3 * g4;
+  if (sig == "g+g+g+g") return g1 + g2 + g3 + g4;
   return g1;
+
 }
 
 
@@ -155,6 +170,11 @@ int main(int argc, char *argv[]) {
     if (iter.find("__fname = ") != std::string::npos){
       fname = rm_sub_str(iter, "__fname = ").c_str(); 
       std::cout << "name: " << fname << newl;}
+    if (iter.find("__signal = ") != std::string::npos){
+      sig = rm_sub_str(iter, "__signal = ").c_str(); }
+    if (iter.find("__poli = ") != std::string::npos){
+      back = rm_sub_str(iter, "__poli = ").c_str(); }
+      std::cout << "f = " << sig << "+" << back << newl;
   }
 
 
