@@ -3,4 +3,6 @@ hist
 root_mc
 hist_mc
 *.d
+*.root
+*.hist
 *.o
