@@ -645,18 +645,6 @@ void User_reco::event ( BelleEvent* evptr, int* status ) {
   setUserInfo(D_m_st, {{"chanel", 2}, {"charg", -1}, {"baryon_num", 0}});
 
 
-  doKvFit(D_p_st);
-  doKvFit(D_m_st);
-
-  doKvFit(D0_st);
-  doKvFit(aD0_st);
-
-
-  doKmvFit(D_p_st, f);
-  doKmvFit(D_m_st, f);
-
-  doKmvFit(D0_st, f);
-  doKmvFit(aD0_st, f);
 
 
   for(std::vector<Particle>::iterator D = D0_st.begin(); D!=D0_st.end(); ++D) {

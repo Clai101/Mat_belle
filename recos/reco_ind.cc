@@ -437,7 +437,7 @@ void User_reco::event ( BelleEvent* evptr, int* status ) {
 
 
   makeLepton(e_p, e_m, mu_p, mu_m, 1);
-  withLeptonIdCut(e_p, e_m, mu_p, mu_m, 0.01, 0.1);
+  withLeptonIdCut(e_p, e_m, mu_p, mu_m, 0.5, 0.9);
   
   makePi0(pi0);
   //makeK0(k0, ak0);
@@ -652,22 +652,6 @@ void User_reco::event ( BelleEvent* evptr, int* status ) {
 
   cout << "3\n" ;
 
-  for(std::vector<Particle>::iterator D = D0_st.begin(); D!=D0_st.end(); ++D) {
-    if (dynamic_cast<UserInfo&>(D->userInfo()).channel().find("chanel")->second == 1){
-      if (D->mass() - D->child(0).mass() > 0.16 or abs(D->child(0).mass() - D->child(0).pType().mass()) > 0.015){
-        D0_st.erase(D); --D; continue;}}
-    if (dynamic_cast<UserInfo&>(D->userInfo()).channel().find("chanel")->second == 2){
-      if (abs(D->mass() - D->child(0).mass() - 0.142014) > 0.030 or abs(D->child(0).mass() - D->child(0).pType().mass()) > 0.015){
-        D0_st.erase(D); --D; continue;}}}
-
-  for(std::vector<Particle>::iterator D = aD0_st.begin(); D!=aD0_st.end(); ++D) {
-    if (dynamic_cast<UserInfo&>(D->userInfo()).channel().find("chanel")->second == 1){
-      if (D->mass() - D->child(0).mass() > 0.16 or abs(D->child(0).mass() - D->child(0).pType().mass()) > 0.015){
-        aD0_st.erase(D); --D; continue;}}
-    if (dynamic_cast<UserInfo&>(D->userInfo()).channel().find("chanel")->second == 2){
-      if (abs(D->mass() - D->child(0).mass() - 0.142014) > 0.030 or abs(D->child(0).mass() - D->child(0).pType().mass()) > 0.015){
-        aD0_st.erase(D); --D; continue;}}}
-
 
   for(std::vector<Particle>::iterator D = D_p_st.begin(); D!=D_p_st.end(); ++D) {
     if (((abs(dynamic_cast<UserInfo&>(D->child(0).userInfo()).vmass() - D->child(0).pType().mass())) > 0.015)) {
@@ -806,7 +790,7 @@ void User_reco::event ( BelleEvent* evptr, int* status ) {
     t1->column("npxc", pStar(x_c, elec, posi).vect().mag());   
     t1->column("mxc", x_c.mass());
 
-    
+
     t1->column("chach", chach.channel().find("chanel")->second);
     t1->column("mach", chach.vmass() - ach.pType().mass());
 

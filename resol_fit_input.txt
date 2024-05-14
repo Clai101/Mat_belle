@@ -1,9 +1,9 @@
-Norm_Summ 500 100
-NormGaus2 0 0
+Norm_Summ 500 100 #int signal(x) dx
+NormGaus2 0 0 #int g(x) dx
 NormCrBal 0 0
 NormGaus3 0 0
 Mean01 2.3 0.01
-Sigm01 0.0432261 0.000680884
+Sigm01 0.0432261 0.000680884 
 Frac2 0.629638 0.0665953
 dMean1 -0.000916104 0.000451502
 Sigm02 0.00813511 0.000512976

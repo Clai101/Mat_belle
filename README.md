@@ -90,12 +90,24 @@ $e^+ e^- \to \Lambda_c^- X_c$
 Сохранили 5 канлов с количеством событий в $\Lambda_c \to pk\pi$
 ./cut "out = rm2l" "cut = p < 0.1 && abs(en - ecm) < 0.05 && abs(mach) < 0.01 && abs(ml) < 0.015 && chl == 5" "chu = chxc = 1-5" "down = 2" "up = 3"
 
-
 * [1] $D_0 p$ 255
 * [2] $D^+ p \pi^-$ 224
 * [3] $D^{*0} p$ 397
 * [4] $D^{*+} p \pi^-$ 427
 * [5] $\Lambda^+_c \pi^+ \pi^-$ 81
+
+### Улучшение разрешени при работе фита:
+До
+
+<p align="center">
+ <img width="600px" src="results/rm2n/rm2n_chu.png" alt="qr"/>
+</p>
+
+После
+
+<p align="center">
+ <img width="600px" src="results/nrm2n/nrm2n_chu.png" alt="qr"/>
+</p>
 
 
 ### Для $|p_{\Lambda}| - |p_{\Lambda_c}|$ в системе центра масс получил:
@@ -152,7 +164,7 @@ $e^+ e^- \to \Lambda_c^- X_c$
 ./cut "out = ang_l_p" "cut = chl <= 2  && ((chxc == 6 && abs(mach) < 0.003) || ((chxc == 4 || chxc == 5)  && abs(mach) < 0.003 && chach == 1) || ((chxc == 4 || chxc == 5)  && abs(mach) < 0.01 && chach == 2) || chxc <= 3 || chxc == 7 ) && abs(rm2l - 2.28646) < 0.2 && ml < 0 && abs(nrm2n) < 0.05" "chu = chxc = 1-5" "down = 0" "up = 3" "fname = ang_l_p_rm_cut"
 
 <p align="center">
- <img width="600px" src="results/pprot_m_plam_rm_cut/pprot_m_plam_rm_cut_chu.png" alt="qr"/>
+ <img width="600px" src="results/ang_l_p_rm_cut/ang_l_p_rm_cut_chu.png" alt="qr"/>
 </p>
 
 ## Каты
