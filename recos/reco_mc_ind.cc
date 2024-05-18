@@ -10,7 +10,7 @@ using namespace std;
 void User_reco::hist_def( void )
 { extern BelleTupleManager* BASF_Histogram;    
   t1 = BASF_Histogram->ntuple ("lmbda_lept",
-    "en nen ecm p np ntr en_gam enc_gam count_gam chxc pxc tr_lamc tr_ach tr_p npxc mxc chach mach chl ml pl ang_l_xc nang_l_xc ang_lc_l ang_l_p p_prot p_lam rm2n nrm2n rm2l nrm2l pn npn rm2nu nrm2nu fnrm2nu chi q2");
+    "en nen ecm p np ntr en_gam enc_gam count_gam chxc pxc tr_lamc tr_ach tr_p npxc mxc chach mach nmach machdt chl ml pl ang_l_xc nang_l_xc ang_lc_l ang_l_p p_prot p_lam rm2n nrm2n rm2l nrm2l pn npn rm2nu nrm2nu fnrm2nu chi q2");
   /*
   t2 = BASF_Histogram->ntuple ("lmbdat",
     "en ecm p ntr chu chrgach chach mach rm2lc");
@@ -362,6 +362,7 @@ void User_reco::event ( BelleEvent* evptr, int* status ) {
   /*************** Make particle lists ********************************/
 
   //Base particles
+  cout << "ooooooooooooo\n"; 
 
   std::vector<Particle> p, ap, k_p, k_m, k0, pi_p, pi_m, pi0, gamma, gam, all, e_p, e_m, mu_m, mu_p, k_s, lam, alam;
 
@@ -440,7 +441,7 @@ void User_reco::event ( BelleEvent* evptr, int* status ) {
 
 
   makeLepton(e_p, e_m, mu_p, mu_m, 1);
-  withLeptonIdCut(e_p, e_m, mu_p, mu_m, 0.5, 0.9);
+  withLeptonIdCut(e_p, e_m, mu_p, mu_m, 0.9, 0.95);
   
   makePi0(pi0);
   //makeK0(k0, ak0);
@@ -461,9 +462,17 @@ void User_reco::event ( BelleEvent* evptr, int* status ) {
 
   float f;
 
+  cout << "1\n";
+
   setPi0Error(pi0);
-  for(std::vector<Particle>::iterator iter_=gamma.begin(); iter_!=gamma.end(); iter_++)
-      setGammaError(*iter_, ip_position, runIp_err);
+  for(std::vector<Particle>::iterator iter_=gamma.begin(); iter_!=gamma.end(); iter_++){
+    if(pStar(*iter_, elec, posi).e() < 0.05){
+      gamma.erase(iter_); --iter_; continue;
+    }
+    setGammaError(*iter_, ip_position, runIp_err);
+  }
+
+  cout << "2.1\n";
 
   doKmvFit(pi0, f);
 
@@ -471,7 +480,7 @@ void User_reco::event ( BelleEvent* evptr, int* status ) {
   doKmvFit(lam, f);
   doKmvFit(alam, f);
 
-    for(std::vector<Particle>::iterator l = lam.begin(); l!=lam.end(); ++l) {
+  for(std::vector<Particle>::iterator l = lam.begin(); l!=lam.end(); ++l) {
       HepPoint3D V(l->mdstVee2().vx(),l->mdstVee2().vy(),0);
     Vector3 P(l->px(),l->py(),0);
     V=V-ip_position;
@@ -609,6 +618,8 @@ void User_reco::event ( BelleEvent* evptr, int* status ) {
   setGenHepInfoT(D_p);
   setGenHepInfoT(D_m);
 
+
+
   //D0
 
   std::vector<Particle> D0, aD0;
@@ -699,22 +710,23 @@ void User_reco::event ( BelleEvent* evptr, int* status ) {
   setGenHepInfoT(D_m_st);
 
 
+
   cout << "3\n" ;
 
   for(std::vector<Particle>::iterator D = D0_st.begin(); D!=D0_st.end(); ++D) {
     if (dynamic_cast<UserInfo&>(D->userInfo()).channel().find("chanel")->second == 1){
-      if (D->mass() - D->child(0).mass() > 0.16 or abs(D->child(0).mass() - D->child(0).pType().mass()) > 0.015){
+      if (abs(dynamic_cast<UserInfo&>(D->child(0).userInfo()).vmass() - D->child(0).pType().mass()) > 0.015){
         D0_st.erase(D); --D; continue;}}
     if (dynamic_cast<UserInfo&>(D->userInfo()).channel().find("chanel")->second == 2){
-      if (abs(D->mass() - D->child(0).mass() - 0.142014) > 0.030 or abs(D->child(0).mass() - D->child(0).pType().mass()) > 0.015){
+      if (abs(dynamic_cast<UserInfo&>(D->child(0).userInfo()).vmass() - D->child(0).pType().mass()) > 0.015){
         D0_st.erase(D); --D; continue;}}}
 
   for(std::vector<Particle>::iterator D = aD0_st.begin(); D!=aD0_st.end(); ++D) {
     if (dynamic_cast<UserInfo&>(D->userInfo()).channel().find("chanel")->second == 1){
-      if (D->mass() - D->child(0).mass() > 0.16 or abs(D->child(0).mass() - D->child(0).pType().mass()) > 0.015){
+      if (abs(dynamic_cast<UserInfo&>(D->child(0).userInfo()).vmass() - D->child(0).pType().mass()) > 0.015){
         aD0_st.erase(D); --D; continue;}}
     if (dynamic_cast<UserInfo&>(D->userInfo()).channel().find("chanel")->second == 2){
-      if (abs(D->mass() - D->child(0).mass() - 0.142014) > 0.030 or abs(D->child(0).mass() - D->child(0).pType().mass()) > 0.015){
+      if (abs(dynamic_cast<UserInfo&>(D->child(0).userInfo()).vmass() - D->child(0).pType().mass()) > 0.015){
         aD0_st.erase(D); --D; continue;}}}
 
 
@@ -847,15 +859,15 @@ void User_reco::event ( BelleEvent* evptr, int* status ) {
     bool tr_p = false;
 
     if (lamc.relation().genHepevt())
-      tr_lamc = checkReal(lamc);
+      tr_lamc = true;
 
     if (ach.relation().genHepevt()){
-      tr_ach = checkReal(ach);
+      tr_ach = true;
     }
 
     if (x_c.child(1).relation().genHepevt()){
       if (chxc.channel().find("chanel")->second <= 4)
-        tr_p = checkReal(x_c.child(0));
+        tr_p = true;
     }
     
 
@@ -884,6 +896,9 @@ void User_reco::event ( BelleEvent* evptr, int* status ) {
 
     t1->column("chach", chach.channel().find("chanel")->second);
     t1->column("mach", chach.vmass() - ach.pType().mass());
+    t1->column("nmach", ach.p().m() - ach.pType().mass());
+
+    t1->column("machdt", static_cast<UserInfo&>(ach.child(0).userInfo()).vmass() - ach.child(0).pType().mass());
 
     t1->column("chi", chi);
 
@@ -917,15 +932,12 @@ void User_reco::event ( BelleEvent* evptr, int* status ) {
     t1->column("ang_l_p", soul.vect().angle(boostT(shellp, soul).vect()));    
     } 
 
-
     t1->column("p_lam", pStar(lam, elec, posi).vect().mag());    
     t1->column("q2", (lamc.p() - lamc.child(0).p()).m2());
     t1->column("q2_nl", (beam - u.p() + lamc.child(1).p()).m2());
 
-
     t1->column("ang_l_xc", pStar(lamc, elec, posi).vect().angle(pStar(x_c, elec, posi).vect()));
     t1->column("nang_l_xc", pStar(lamc, elec, posi).vect().angle(pStar(nx_c, elec, posi).vect()));
-
 
     t1->column("rm2n", (beam - u.p()).m2());
     t1->column("nrm2n", (beam - nu.p()).m2());
@@ -937,7 +949,6 @@ void User_reco::event ( BelleEvent* evptr, int* status ) {
     t1->column("rm2nu", (beam - (x_c.p() + lamc.child(0).p() + lamc.child(1).p())).m2());
     t1->column("nrm2nu", (beam - (nx_c.p() + lamc.child(0).p() + lamc.child(1).p())).m2());
     
-
     t1->column("fox", r2);
 
 
